@@ -1,69 +1,85 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Globe, ExternalLink, AlertCircle } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Globe, ExternalLink, AlertCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Component() {
-  const router = useRouter()
-  const [url, setUrl] = useState("")
-  const [isValid, setIsValid] = useState(true)
-  const [submitted, setSubmitted] = useState(false)
+  const router = useRouter();
+  const [url, setUrl] = useState("");
+  const [isValid, setIsValid] = useState(true);
+  const [submitted, setSubmitted] = useState(false);
 
   const validateUrl = (inputUrl: string) => {
     try {
-      new URL(inputUrl)
-      return true
+      new URL(inputUrl);
+      return true;
     } catch {
-      return false
+      return false;
     }
-  }
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
     if (!url.trim()) {
-      setIsValid(false)
-      return
+      setIsValid(false);
+      return;
     }
 
-    const valid = validateUrl(url)
-    setIsValid(valid)
+    const valid = validateUrl(url);
+    setIsValid(valid);
 
     if (valid) {
-      setSubmitted(true)
+      setSubmitted(true);
       // 여기에 URL 처리 로직을 추가할 수 있습니다
-      console.log("제출된 URL:", url)
+      const res = await fetch(process.env.NEXT_PUBLIC_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          blog_url: url,
+        }),
+      });
+      const resJson = await res.json();
+
+      console.log(resJson);
+      console.log("제출된 URL:", url);
       setTimeout(() => {
-        router.push("/analysis-result")
-      }, 1000)
+        router.push("/analysis-result");
+      }, 1000);
     }
-  }
+  };
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setUrl(value)
-    setSubmitted(false)
+    const value = e.target.value;
+    setUrl(value);
+    setSubmitted(false);
 
     if (value.trim()) {
-      setIsValid(validateUrl(value))
+      setIsValid(validateUrl(value));
     } else {
-      setIsValid(true)
+      setIsValid(true);
     }
-  }
+  };
 
   const handleVisitUrl = () => {
     if (url && isValid) {
-      window.open(url, "_blank", "noopener,noreferrer")
+      window.open(url, "_blank", "noopener,noreferrer");
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
@@ -74,7 +90,9 @@ export default function Component() {
             <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
               <Globe className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-xl font-bold text-gray-900">블로그 광고성 분석기</h1>
+            <h1 className="text-xl font-bold text-gray-900">
+              블로그 광고성 분석기
+            </h1>
           </div>
         </div>
       </div>
@@ -86,13 +104,18 @@ export default function Component() {
               <Globe className="w-8 h-8 text-white" />
             </div>
             <CardTitle className="text-2xl font-bold">URL 분석 시작</CardTitle>
-            <CardDescription className="text-green-100">분석하고 싶은 블로그 글의 URL을 입력해주세요</CardDescription>
+            <CardDescription className="text-green-100">
+              분석하고 싶은 블로그 글의 URL을 입력해주세요
+            </CardDescription>
           </CardHeader>
 
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-6 p-8">
               <div className="space-y-3">
-                <Label htmlFor="url" className="text-lg font-semibold text-gray-700">
+                <Label
+                  htmlFor="url"
+                  className="text-lg font-semibold text-gray-700"
+                >
                   블로그 URL
                 </Label>
                 <Input
@@ -110,7 +133,9 @@ export default function Component() {
                 {!isValid && (
                   <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-lg">
                     <AlertCircle className="w-5 h-5" />
-                    <span className="font-medium">올바른 URL 형식을 입력해주세요</span>
+                    <span className="font-medium">
+                      올바른 URL 형식을 입력해주세요
+                    </span>
                   </div>
                 )}
               </div>
@@ -119,13 +144,17 @@ export default function Component() {
                 <Alert className="border-green-200 bg-green-50">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <AlertDescription className="text-green-800 font-medium">URL 분석을 시작합니다...</AlertDescription>
+                    <AlertDescription className="text-green-800 font-medium">
+                      URL 분석을 시작합니다...
+                    </AlertDescription>
                   </div>
                 </Alert>
               )}
 
               <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="font-semibold text-gray-800 mb-2">💡 분석 항목</h3>
+                <h3 className="font-semibold text-gray-800 mb-2">
+                  💡 분석 항목
+                </h3>
                 <ul className="text-sm text-gray-600 space-y-1">
                   <li>• 광고성 문구 및 키워드 감지</li>
                   <li>• 감정 분석 (긍정/부정/중립)</li>
@@ -168,9 +197,11 @@ export default function Component() {
         {/* 네이버 스타일 푸터 정보 */}
         <div className="mt-8 text-center text-sm text-gray-500">
           <p>안전하고 정확한 블로그 분석 서비스</p>
-          <p className="mt-1">개인정보는 수집하지 않으며, 분석 결과만 제공됩니다.</p>
+          <p className="mt-1">
+            개인정보는 수집하지 않으며, 분석 결과만 제공됩니다.
+          </p>
         </div>
       </div>
     </div>
-  )
+  );
 }
