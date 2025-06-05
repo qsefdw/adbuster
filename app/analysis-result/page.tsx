@@ -13,8 +13,10 @@ import {
   BarChart3,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAnalyzer } from "@/contexts/AnalyzerContext";
 
 export default function AnalysisResultPage() {
+  const { analyzedData, analyzedUrl } = useAnalyzer();
   const router = useRouter();
 
   const handleBack = () => {
@@ -27,6 +29,49 @@ export default function AnalysisResultPage() {
 
   const handleDetailedAnalysis = () => {
     router.push("/detailed-analysis");
+  };
+
+  console.log(analyzedData);
+  console.log(analyzedUrl);
+
+  const getPositiveExpression = (positive_score) => {
+    if (isNaN(positive_score)) return "API를 불러오는 중 에러가 발생했습니다.";
+
+    if (positive_score > 80) return "과도한 긍정적 표현";
+
+    if (positive_score > 50) return "높은 긍정적 표현";
+
+    return "적당한 긍정적 표현";
+  };
+  const getPositiveColor = (positive_score) => {
+    if (isNaN(positive_score)) return "gray";
+
+    if (positive_score > 80) return "red";
+
+    if (positive_score > 50) return "orange";
+
+    return "yellow";
+  };
+
+  const getRecommnedationExpression = (credibility_score) => {
+    if (credibility_score == null)
+      return "API를 불러오는 중 에러가 발생했습니다.";
+
+    if (credibility_score >= 7) return "높음";
+
+    if (credibility_score >= 4) return "보통";
+
+    return "낮음";
+  };
+
+  const getRecommnedationColor = (credibility_score) => {
+    if (credibility_score == null) return "gray";
+
+    if (credibility_score >= 7) return "red";
+
+    if (credibility_score >= 4) return "orange";
+
+    return "yello";
   };
 
   return (
@@ -78,7 +123,7 @@ export default function AnalysisResultPage() {
         {/* 분석 URL 표시 - 네이버 스타일 초록색으로 변경 */}
         <div className="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg">
           <p className="text-sm text-green-700">
-            <strong>분석 대상:</strong> https://blog.naver.com/example/123456789
+            <strong>분석 대상:</strong> {analyzedUrl}
           </p>
         </div>
 
@@ -86,17 +131,36 @@ export default function AnalysisResultPage() {
         <Card className="mb-8 shadow-xl border-0 bg-white">
           <CardContent className="p-8 text-center">
             <div className="mb-8">
-              <div className="inline-flex items-center gap-4 px-10 py-6 bg-red-100 border-3 border-red-300 rounded-2xl shadow-lg">
-                <div className="text-6xl">🔴</div>
-                <div className="text-left">
-                  <div className="text-3xl font-bold text-red-800 mb-1">
-                    광고 의심
+              {analyzedData?.adbuster_final_score_analysis?.grade ==
+              "🟡 신뢰" ? (
+                <>
+                  <div className="inline-flex items-center gap-4 px-10 py-6 bg-yellow-100 border-3 border-yellow-300 rounded-2xl shadow-lg">
+                    <div className="text-6xl">🟡</div>
+                    <div className="text-left">
+                      <div className="text-3xl font-bold text-yellow-800 mb-1">
+                        신뢰
+                      </div>
+                      <div className="text-lg text-yellow-700">
+                        신뢰할 수 있는 글입니다.
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-lg text-red-700">
-                    광고성 요소가 다수 발견되어 주의가 필요합니다
+                </>
+              ) : (
+                <>
+                  <div className="inline-flex items-center gap-4 px-10 py-6 bg-red-100 border-3 border-red-300 rounded-2xl shadow-lg">
+                    <div className="text-6xl">🔴</div>
+                    <div className="text-left">
+                      <div className="text-3xl font-bold text-red-800 mb-1">
+                        광고 의심
+                      </div>
+                      <div className="text-lg text-red-700">
+                        광고성 요소가 다수 발견되어 주의가 필요합니다
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </>
+              )}
             </div>
 
             {/* 종합 점수 */}
@@ -104,7 +168,11 @@ export default function AnalysisResultPage() {
               <h3 className="text-xl font-semibold text-gray-800 mb-4">
                 종합 광고 가능성
               </h3>
-              <CircularProgress percentage={78} />
+              <CircularProgress
+                percentage={(
+                  analyzedData?.adbuster_final_score_analysis?.final_score ?? 0
+                ).toFixed(1)}
+              />
             </div>
           </CardContent>
         </Card>
@@ -120,20 +188,55 @@ export default function AnalysisResultPage() {
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* 긍정적 표현 비율 */}
-              <div className="bg-red-50 p-6 rounded-lg border-2 border-red-200">
+              <div
+                className={`bg-${getPositiveColor(
+                  analyzedData?.athena_analysis?.azure_overall_sentiment
+                    ?.positive_score * 100
+                )}-50 p-6 rounded-lg border-2 border-${getPositiveColor(
+                  analyzedData?.athena_analysis?.azure_overall_sentiment
+                    ?.positive_score * 100
+                )}-200`}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg font-semibold text-gray-800">
-                    과도한 긍정적 표현
+                    {getPositiveExpression(
+                      analyzedData?.athena_analysis?.azure_overall_sentiment
+                        ?.positive_score * 100
+                    )}
                   </h4>
-                  <span className="text-2xl font-bold text-red-600">85%</span>
+                  <span
+                    className={`text-2xl font-bold text-${getPositiveColor(
+                      analyzedData?.athena_analysis?.azure_overall_sentiment
+                        ?.positive_score * 100
+                    )}-600`}
+                  >
+                    {(
+                      (analyzedData?.athena_analysis?.azure_overall_sentiment
+                        ?.positive_score ?? 0) * 100
+                    ).toFixed(0)}
+                    %
+                  </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
                   <div
-                    className="bg-red-500 h-3 rounded-full transition-all duration-1000"
-                    style={{ width: "85%" }}
+                    className={`bg-${getPositiveColor(
+                      analyzedData?.athena_analysis?.azure_overall_sentiment
+                        ?.positive_score * 100
+                    )}-500 h-3 rounded-full transition-all duration-1000`}
+                    style={{
+                      width: `${
+                        (analyzedData?.athena_analysis?.azure_overall_sentiment
+                          ?.positive_score ?? 0) * 100
+                      }%`,
+                    }}
                   ></div>
                 </div>
-                <p className="text-sm text-red-700">
+                <p
+                  className={`text-sm text-${getPositiveColor(
+                    analyzedData?.athena_analysis?.azure_overall_sentiment
+                      ?.positive_score * 100
+                  )}-700`}
+                >
                   일반적인 리뷰보다 긍정적 표현이 현저히 높습니다
                 </p>
               </div>
@@ -160,22 +263,45 @@ export default function AnalysisResultPage() {
               </div>
 
               {/* 객관성 수준 */}
-              <div className="bg-yellow-50 p-6 rounded-lg border-2 border-yellow-200 md:col-span-2">
+              <div
+                className={`bg-${getRecommnedationColor(
+                  analyzedData?.athena_analysis?.credibility_score
+                )}-50 p-6 rounded-lg border-2 border-${getRecommnedationColor(
+                  analyzedData?.athena_analysis?.credibility_score
+                )}-200 md:col-span-2`}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg font-semibold text-gray-800">
                     객관성 수준
                   </h4>
-                  <span className="text-2xl font-bold text-yellow-600">
-                    보통
+                  <span
+                    className={`text-2xl font-bold text-${getRecommnedationColor(
+                      analyzedData?.athena_analysis?.credibility_score
+                    )}-600`}
+                  >
+                    {getRecommnedationExpression(
+                      analyzedData?.athena_analysis?.credibility_score
+                    )}
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
                   <div
-                    className="bg-yellow-500 h-3 rounded-full transition-all duration-1000"
-                    style={{ width: "45%" }}
+                    className={`bg-${getRecommnedationColor(
+                      analyzedData?.athena_analysis?.credibility_score
+                    )}-500 h-3 rounded-full transition-all duration-1000`}
+                    style={{
+                      width: `${
+                        (analyzedData?.athena_analysis?.credibility_score ??
+                          0) * 10
+                      }%`,
+                    }}
                   ></div>
                 </div>
-                <p className="text-sm text-yellow-700">
+                <p
+                  className={`text-sm text-${getRecommnedationColor(
+                    analyzedData?.athena_analysis?.credibility_score
+                  )}-700`}
+                >
                   균형잡힌 시각이 부족하고 주관적인 표현이 많습니다
                 </p>
               </div>

@@ -17,8 +17,10 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Globe, ExternalLink, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAnalyzer } from "./contexts/AnalyzerContext";
 
 export default function Component() {
+  const { setAnalyzedData, setAnalyzedUrl } = useAnalyzer();
   const router = useRouter();
   const [url, setUrl] = useState("");
   const [isValid, setIsValid] = useState(true);
@@ -54,9 +56,8 @@ export default function Component() {
         }),
       });
       const resJson = await res.json();
-
-      console.log(resJson);
-      console.log("제출된 URL:", url);
+      setAnalyzedUrl(url);
+      setAnalyzedData(resJson);
       setTimeout(() => {
         router.push("/analysis-result");
       }, 1000);
