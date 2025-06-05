@@ -1,0 +1,172 @@
+"use client"
+
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { CircularProgress } from "@/components/circular-progress"
+import { AlertTriangle, ArrowLeft, Home, Info, ChevronRight, BarChart3 } from "lucide-react"
+import { useRouter } from "next/navigation"
+
+export default function AnalysisResultPage() {
+  const router = useRouter()
+
+  const handleBack = () => {
+    router.back()
+  }
+
+  const handleHome = () => {
+    router.push("/")
+  }
+
+  const handleDetailedAnalysis = () => {
+    router.push("/detailed-analysis")
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
+      {/* 네이버 스타일 헤더 */}
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-4xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-white" />
+              </div>
+              <h1 className="text-xl font-bold text-gray-900">분석 결과</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" onClick={handleHome} className="text-gray-600 hover:text-gray-900">
+                <Home className="w-4 h-4 mr-2" />홈
+              </Button>
+              <Button variant="ghost" onClick={handleBack} className="text-gray-600 hover:text-gray-900">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                뒤로
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* 브레드크럼 */}
+        <div className="mb-6 text-sm text-gray-500">
+          <span className="hover:text-green-600 cursor-pointer" onClick={handleHome}>
+            홈
+          </span>
+          <span className="mx-2">{">"}</span>
+          <span className="text-gray-800">분석 결과</span>
+        </div>
+
+        {/* 분석 URL 표시 - 네이버 스타일 초록색으로 변경 */}
+        <div className="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-sm text-green-700">
+            <strong>분석 대상:</strong> https://blog.naver.com/example/123456789
+          </p>
+        </div>
+
+        {/* 최종 판단 - 가장 크게 표시 */}
+        <Card className="mb-8 shadow-xl border-0 bg-white">
+          <CardContent className="p-8 text-center">
+            <div className="mb-8">
+              <div className="inline-flex items-center gap-4 px-10 py-6 bg-red-100 border-3 border-red-300 rounded-2xl shadow-lg">
+                <div className="text-6xl">🔴</div>
+                <div className="text-left">
+                  <div className="text-3xl font-bold text-red-800 mb-1">광고 의심</div>
+                  <div className="text-lg text-red-700">광고성 요소가 다수 발견되어 주의가 필요합니다</div>
+                </div>
+              </div>
+            </div>
+
+            {/* 종합 점수 */}
+            <div className="mb-8">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">종합 광고 가능성</h3>
+              <CircularProgress percentage={78} />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 핵심 분석 지표 - 네이버 스타일 초록색으로 변경 */}
+        <Card className="mb-8 shadow-lg border-0 bg-white">
+          <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-lg">
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <Info className="w-6 h-6" />
+              주요 분석 지표
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* 긍정적 표현 비율 */}
+              <div className="bg-red-50 p-6 rounded-lg border-2 border-red-200">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg font-semibold text-gray-800">과도한 긍정적 표현</h4>
+                  <span className="text-2xl font-bold text-red-600">85%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
+                  <div
+                    className="bg-red-500 h-3 rounded-full transition-all duration-1000"
+                    style={{ width: "85%" }}
+                  ></div>
+                </div>
+                <p className="text-sm text-red-700">일반적인 리뷰보다 긍정적 표현이 현저히 높습니다</p>
+              </div>
+
+              {/* 광고성 키워드 빈도 */}
+              <div className="bg-orange-50 p-6 rounded-lg border-2 border-orange-200">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg font-semibold text-gray-800">광고성 키워드 빈도</h4>
+                  <span className="text-2xl font-bold text-orange-600">높음</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
+                  <div
+                    className="bg-orange-500 h-3 rounded-full transition-all duration-1000"
+                    style={{ width: "75%" }}
+                  ></div>
+                </div>
+                <p className="text-sm text-orange-700">'추천', '협찬' 등 광고 관련 키워드가 22회 발견되었습니다</p>
+              </div>
+
+              {/* 객관성 수준 */}
+              <div className="bg-yellow-50 p-6 rounded-lg border-2 border-yellow-200 md:col-span-2">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg font-semibold text-gray-800">객관성 수준</h4>
+                  <span className="text-2xl font-bold text-yellow-600">보통</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
+                  <div
+                    className="bg-yellow-500 h-3 rounded-full transition-all duration-1000"
+                    style={{ width: "45%" }}
+                  ></div>
+                </div>
+                <p className="text-sm text-yellow-700">균형잡힌 시각이 부족하고 주관적인 표현이 많습니다</p>
+              </div>
+            </div>
+
+            {/* 하단 상세 분석 버튼 */}
+            <div className="mt-8 text-center">
+              <Button
+                onClick={handleDetailedAnalysis}
+                variant="outline"
+                className="border-green-200 text-green-700 hover:bg-green-50 px-6 py-3 text-base font-medium"
+              >
+                <BarChart3 className="w-5 h-5 mr-2" />더 자세한 분석 결과 보기
+                <ChevronRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 최종 안내 - 네이버 스타일 초록색으로 변경 */}
+        <Alert className="border-green-200 bg-green-50 shadow-lg">
+          <Info className="w-6 h-6 text-green-600" />
+          <div className="ml-3">
+            <h3 className="font-bold text-lg text-green-800 mb-2">💡 이 분석 결과는 참고용입니다</h3>
+            <AlertDescription className="text-green-700 leading-relaxed text-base">
+              AI 기반 자동 분석 결과이며, 최종 판단은 사용자의 몫입니다. 의심스러운 내용이 있다면 다른 정보원과
+              비교해보세요.
+            </AlertDescription>
+          </div>
+        </Alert>
+      </div>
+    </div>
+  )
+}
