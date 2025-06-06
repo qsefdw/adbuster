@@ -45,6 +45,15 @@ export default function DetailedAnalysisPage() {
   const router = useRouter();
   const { analyzedData, analyzedUrl } = useAnalyzer();
 
+  const getPositiveText = (positive_score) => {
+    if (positive_score > 80)
+      return "일반적인 리뷰(50-60%)보다 많이 높은 수준입니다.";
+
+    if (positive_score > 50)
+      return "일반적인 리뷰(50-60%)보다 현저히 높은 수준입니다.";
+
+    return "일반적인 리뷰(50-60%)보다 적당한 수준입니다.";
+  };
   // 감성 분석 데이터 (실제 백엔드 데이터 기반)
   const sentimentData = [
     {
@@ -334,12 +343,26 @@ export default function DetailedAnalysisPage() {
                       <div className="space-y-4">
                         <div className="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
                           <h5 className="font-semibold text-green-800 mb-2">
-                            긍정적인 내용이 85%로 가장 많아요
+                            긍정적인 내용이{" "}
+                            {Number(
+                              (
+                                (analyzedData?.athena_analysis
+                                  ?.azure_overall_sentiment?.positive_score ??
+                                  0) * 100
+                              ).toFixed(0)
+                            )}
+                            %로 가장 많아요
                           </h5>
                           <p className="text-sm text-green-700">
-                            주로 제품에 대한 만족감과 추천 의사를 표현하고
-                            있네요. 일반적인 리뷰(50-60%)보다 현저히 높은
-                            수준입니다.
+                            {getPositiveText(
+                              Number(
+                                (
+                                  (analyzedData?.athena_analysis
+                                    ?.azure_overall_sentiment?.positive_score ??
+                                    0) * 100
+                                ).toFixed(0)
+                              )
+                            )}
                           </p>
                         </div>
                         <div className="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-500">

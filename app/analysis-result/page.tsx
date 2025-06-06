@@ -43,6 +43,7 @@ export default function AnalysisResultPage() {
 
     return "적당한 긍정적 표현";
   };
+
   const getPositiveColor = (positive_score) => {
     if (isNaN(positive_score)) return "gray";
 
