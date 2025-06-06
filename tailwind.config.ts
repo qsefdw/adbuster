@@ -8,6 +8,27 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "*.{js,ts,jsx,tsx,mdx}"
   ],
+  safelist: [
+    "bg-yellow-100",
+    "bg-yellow-200",
+    "bg-yellow-300",
+    "bg-yellow-400",
+    "bg-yellow-500",
+    "bg-yellow-600",
+    "bg-yellow-700",
+    "bg-yellow-800",
+    "bg-yellow-900",
+	'text-yellow-100',
+    'text-yellow-200',
+    'text-yellow-300',
+    'text-yellow-400',
+    'text-yellow-500',
+    'text-yellow-600',
+    'text-yellow-700',
+    'text-yellow-800',
+    'text-yellow-900',
+  ],
+
   theme: {
   	extend: {
   		colors: {

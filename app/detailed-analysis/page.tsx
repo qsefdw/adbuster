@@ -131,22 +131,22 @@ export default function DetailedAnalysisPage() {
   // 레이더 차트 데이터 (백엔드 실제 데이터 기반, 가독성 제외)
   const radarData = [
     {
-      subject: "광고성 지수",
+      subject: "감정분석",
       score: 78,
       description: "광고 관련 키워드와 표현의 집중도",
     },
     {
-      subject: "내용 객관성",
+      subject: "광고성분석",
       score: 45,
       description: "정보의 균형성과 객관적 서술 정도",
     },
     {
-      subject: "키워드 집중도",
+      subject: "키워드반복",
       score: 72,
       description: "특정 키워드의 반복 사용 빈도",
     },
     {
-      subject: "정보 투명성",
+      subject: "블로그반복",
       score: 35,
       description: "광고 표시 및 정보 공개의 투명성",
     },
@@ -646,21 +646,25 @@ export default function DetailedAnalysisPage() {
                             <span className="text-sm font-medium">55%</span>
                           </div>
                           <Progress value={55} className="h-2" />
+
+                                                    <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-600">
+                              사실 기반 서술
+                            </span>
+                            <span className="text-sm font-medium">55%</span>
+                          </div>
+                          <Progress value={55} className="h-2" />
+                                                    <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-600">
+                              사실 기반 서술
+                            </span>
+                            <span className="text-sm font-medium">55%</span>
+                          </div>
+                          <Progress value={55} className="h-2" />
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                      <h5 className="font-semibold text-gray-800 mb-2">
-                        📝 게시글 주요 내용 요약
-                      </h5>
-                      <p className="text-sm text-gray-700 leading-relaxed">
-                        겨울철 피부관리를 위한 미백크림 사용 후기를 다루고
-                        있으며, 제품의 효과와 만족도를 강조하고 있습니다. 할인
-                        정보와 구매 링크가 포함되어 있어 상업적 목적이 강한
-                        콘텐츠로 보입니다.
-                      </p>
-                    </div>
                   </div>
                 </div>
               </TabsContent>
