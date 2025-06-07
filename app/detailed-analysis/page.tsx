@@ -156,10 +156,10 @@ export default function DetailedAnalysisPage() {
 
   // 레이더 차트 데이터 (백엔드 실제 데이터 기반, 가독성 제외)
   const radarData = [
-    { subject: "광고성 지수", score: 78, description: "광고 관련 키워드와 표현의 집중도" },
-    { subject: "내용 객관성", score: 45, description: "정보의 균형성과 객관적 서술 정도" },
-    { subject: "키워드 집중도", score: 72, description: "특정 키워드의 반복 사용 빈도" },
-    { subject: "정보 투명성", score: 35, description: "광고 표시 및 정보 공개의 투명성" },
+    { subject: "감정분석", score: 78, description: "광고 관련 키워드와 표현의 집중도" },
+    { subject: "광고성", score: 45, description: "정보의 균형성과 객관적 서술 정도" },
+    { subject: "유사도분석", score: 72, description: "특정 키워드의 반복 사용 빈도" },
+    { subject: "키워드반복", score: 35, description: "광고 표시 및 정보 공개의 투명성" },
   ]
 
   // 객관성 분석 데이터
@@ -296,14 +296,14 @@ export default function DetailedAnalysisPage() {
                   className="data-[state=active]:bg-green-600 data-[state=active]:text-white hover:bg-green-100"
                 >
                   <AlertTriangle className="w-4 h-4 mr-2" />
-                  광고성 분석
+                  유사도 분석
                 </TabsTrigger>
                 <TabsTrigger
                   value="credibility"
                   className="data-[state=active]:bg-green-600 data-[state=active]:text-white hover:bg-green-100"
                 >
                   <Shield className="w-4 h-4 mr-2" />
-                  객관성 분석
+                  블로그 평가
                 </TabsTrigger>
                 <TabsTrigger
                   value="comprehensive"
@@ -404,7 +404,7 @@ export default function DetailedAnalysisPage() {
                             균형잡힌 시각이 부족해요
                           </h5>
                           <p className="text-sm text-yellow-700">
-                            부정적 의견이 8%로 매우 낮아 객관적인 평가가 부족할
+                            부정적 의견이 10%미만으로 매우 낮아 객관적인 평가가 부족할
                             수 있어요.
                           </p>
                         </div>
@@ -441,10 +441,6 @@ export default function DetailedAnalysisPage() {
               {/* 키워드 분석 탭 */}
               <TabsContent value="keywords" className="mt-0">
                 <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-                  <div className="flex items-center gap-2 mb-6">
-                    <Search className="w-6 h-6 text-green-600" />
-                    <h3 className="text-2xl font-semibold text-gray-800">Keyword Repetition Analysis</h3>
-                  </div>
 
                   {/* 상단 요약 - 2열 레이아웃 */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
@@ -461,17 +457,17 @@ export default function DetailedAnalysisPage() {
                     {/* 오른쪽 - 주요 지표 */}
                     <div className="space-y-6">
                       <div className="bg-gray-50 p-4 rounded-lg">
-                        <h4 className="text-sm font-medium text-gray-500 mb-2">Main Product Name</h4>
+                        <h4 className="text-sm font-medium text-gray-500 mb-2">제품명</h4>
                         <p className="text-lg font-semibold text-gray-800">{keywordRepetitionData.mainProductName}</p>
                       </div>
 
                       <div className="bg-gray-50 p-4 rounded-lg">
-                        <h4 className="text-sm font-medium text-gray-500 mb-2">Repetition Score</h4>
+                        <h4 className="text-sm font-medium text-gray-500 mb-2">반복점수</h4>
                         <p className="text-lg font-semibold text-green-700">{keywordRepetitionData.repetitionScore}%</p>
                       </div>
 
                       <div className="bg-gray-50 p-4 rounded-lg">
-                        <h4 className="text-sm font-medium text-gray-500 mb-2">Top Keywords Average</h4>
+                        <h4 className="text-sm font-medium text-gray-500 mb-2">최다 반복 횟수</h4>
                         <p className="text-lg font-semibold text-gray-800">
                           {keywordRepetitionData.topKeywordsAverage} mentions
                         </p>
@@ -543,12 +539,6 @@ export default function DetailedAnalysisPage() {
 
               {/* 광고성 분석 탭 - 새로운 디자인 */}
               <TabsContent value="advertisement" className="mt-0">
-                <div className="flex items-center gap-2 mb-6">
-                  <div className="w-3 h-3 bg-green-700 rounded-full"></div>
-                  <h3 className="text-xl font-semibold text-gray-800">
-                    블로그 유사도 분석 결과 (합수명: analyze_blog_similarity)
-                  </h3>
-                </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* 왼쪽 열 - 기본 정보 및 광고성 점수 */}
@@ -619,7 +609,7 @@ export default function DetailedAnalysisPage() {
                   {/* 오른쪽 열 - 문장별 상세 분석 결과 */}
                   <div className="space-y-6">
                     <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-                      <h4 className="text-lg font-semibold text-gray-800 mb-6">문장별 분석 결과</h4>
+                      <h4 className="text-lg font-semibold text-gray-800 mb-6">핵심 문장별 유사도 분석</h4>
 
                       <div className="space-y-8">
                         {sentenceAnalysisData.map((sentence) => (
@@ -681,8 +671,7 @@ export default function DetailedAnalysisPage() {
                 {/* 상단 정보 배너 */}
                 <div className="bg-green-50 p-4 rounded-lg border border-green-200 mb-6">
                   <p className="text-sm text-green-700">
-                    객관성 분석은 게시글의 균형성, 투명성, 사실 기반 정도를 평가합니다. 점수가 높을수록 더 객관적인
-                    정보를 제공하는 콘텐츠입니다.
+                    해당 블로그 글에서 광고성으로 의심할 수 있는 부분들을 객관적으로 분석한 내용입니다. 브랜드명, 제품명, 특정 표현 등 관련 요소들을 중심으로 정리하였습니다.
                   </p>
                 </div>
 
@@ -692,7 +681,7 @@ export default function DetailedAnalysisPage() {
                     {/* 객관성 점수 카드 */}
                     <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm text-center">
                       <div className="text-5xl font-bold text-gray-800 mb-2">45</div>
-                      <div className="text-sm text-gray-500 mb-4">객관성 점수</div>
+                      <div className="text-sm text-gray-500 mb-4">광고 확률</div>
                       <div className="inline-block bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
                         보통 수준
                       </div>

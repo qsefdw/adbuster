@@ -331,7 +331,6 @@ export default function AnalysisResultPage() {
             </h3>
             <AlertDescription className="text-green-700 leading-relaxed text-base">
               AI 기반 자동 분석 결과이며, 최종 판단은 사용자의 몫입니다.
-              의심스러운 내용이 있다면 다른 정보원과 비교해보세요.
             </AlertDescription>
           </div>
         </Alert>
