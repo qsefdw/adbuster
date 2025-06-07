@@ -1,9 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
+import { Badge } from "@/components/ui/badge"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import {
   ArrowLeft,
   Share2,
@@ -14,13 +16,13 @@ import {
   Search,
   Shield,
   BarChart3,
-  DollarSign,
-  Link,
-  Sparkles,
-  Eye,
   FileText,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
+  FileCheck,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 import {
   PieChart,
   Pie,
@@ -32,17 +34,16 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   Radar,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
 } from "recharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAnalyzer } from "@/contexts/AnalyzerContext";
+import { RadialProgress } from "@/components/radial-progress"
+
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts"
 
 export default function DetailedAnalysisPage() {
   const router = useRouter();
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const { analyzedData, analyzedUrl } = useAnalyzer();
 
   const getPositiveText = (positive_score) => {
@@ -92,73 +93,106 @@ export default function DetailedAnalysisPage() {
   ];
 
   // 키워드 분석 데이터 (실제 백엔드 데이터 기반)
-  const keywordData = [
-    { keyword: "추천", count: 22, category: "평가성" },
-    { keyword: "협찬", count: 18, category: "광고성" },
-    { keyword: "리뷰", count: 15, category: "평가성" },
-    { keyword: "할인", count: 12, category: "상업성" },
-    { keyword: "특가", count: 10, category: "상업성" },
-  ];
+  const keywordRepetitionData = {
+    mainProductName: "○○ 미백크림",
+    repetitionScore: 82.2,
+    topKeywordsAverage: 15.4,
+    wordCloudKeywords: [
+      { word: "추천", count: 22, color: "bg-red-500", size: "text-2xl" },
+      { word: "협찬", count: 18, color: "bg-orange-500", size: "text-xl" },
+      { word: "리뷰", count: 15, color: "bg-blue-500", size: "text-lg" },
+      { word: "할인", count: 12, color: "bg-green-500", size: "text-base" },
+      { word: "특가", count: 10, color: "bg-purple-500", size: "text-base" },
+      { word: "만족", count: 8, color: "bg-pink-500", size: "text-sm" },
+      { word: "효과", count: 7, color: "bg-indigo-500", size: "text-sm" },
+      { word: "사용", count: 6, color: "bg-yellow-500", size: "text-sm" },
+      { word: "제품", count: 5, color: "bg-teal-500", size: "text-xs" },
+      { word: "피부", count: 4, color: "bg-cyan-500", size: "text-xs" },
+      { word: "크림", count: 3, color: "bg-rose-500", size: "text-xs" },
+      { word: "브랜드", count: 2, color: "bg-amber-500", size: "text-xs" },
+    ],
+    detailsTable: [
+      { keyword: "추천", count: 22, sourceProduct: "○○ 미백크림" },
+      { keyword: "협찬", count: 18, sourceProduct: "○○ 미백크림" },
+      { keyword: "리뷰", count: 15, sourceProduct: "○○ 미백크림" },
+      { keyword: "할인", count: 12, sourceProduct: "△△ 세럼" },
+      { keyword: "특가", count: 10, sourceProduct: "△△ 세럼" },
+      { keyword: "만족", count: 8, sourceProduct: "○○ 미백크림" },
+      { keyword: "효과", count: 7, sourceProduct: "○○ 미백크림" },
+      { keyword: "사용", count: 6, sourceProduct: "일반 용어" },
+      { keyword: "제품", count: 5, sourceProduct: "일반 용어" },
+      { keyword: "피부", count: 4, sourceProduct: "일반 용어" },
+    ],
+  }
 
-  // 광고성 판단 근거 (실제 백엔드 데이터 기반)
-  const adIndicators = [
+  // 문장별 분석 데이터 (이미지 기반으로 업데이트)
+  const sentenceAnalysisData = [
     {
-      icon: <DollarSign className="w-5 h-5 text-red-500" />,
-      title: "협찬/원고료 문구 언급됨",
-      detected: true,
-      description: "협찬, 원고료 등 광고 관련 직접적 표현 발견",
+      id: 3,
+      text: "그동안 속건조와 속당김이 해결되지 않아 화장품추천 받은 제품들을 중구난방 껴내놓고 바르느라 시간도 오래 걸리고 번거로웠는데요.",
+      duplicateRatio: "0.00 (0/4)",
+      similarSentences: "0개",
+      similarBlogRatio: "0.00 (0/4)",
+      adScore: "0.00/1.0",
+      similarBlogs: [], // 유사한 블로그 없음
     },
     {
-      icon: <Link className="w-5 h-5 text-orange-500" />,
-      title: "구매 유도 링크 포함",
-      detected: true,
-      description: "쇼핑몰 링크나 구매 유도 URL 포함",
+      id: 4,
+      text: "보통 계절의 변화에 따라 제품을 바꿔먹서 민감한 타입인 자극이 될 수 밖에 없었는데 유분기가 느껴지지 않는 촉촉함으로 4계절내내 데일리 건...",
+      duplicateRatio: "0.00 (0/6)",
+      similarSentences: "1개",
+      similarBlogRatio: "0.17 (1/6)",
+      adScore: "0.06/1.0",
+      similarBlogs: [
+        {
+          name: "추억속으로",
+          similarity: 0.9,
+          quote:
+            "촉촉하고 산뜻한타입이라서 흡수가 빠르며 끈적함이 없어 넘치들이 쓰기 정말 좋은데요. 남성화장품으로 쓰기 정말 좋은것은보남자들의 경우유분기과하게 많은제품을... 남자 기초제...",
+        },
+      ],
     },
-    {
-      icon: <Sparkles className="w-5 h-5 text-yellow-500" />,
-      title: "과장된 긍정 표현 다수",
-      detected: true,
-      description: "과도한 칭찬이나 극찬 표현 반복 사용",
-    },
-    {
-      icon: <Eye className="w-5 h-5 text-green-500" />,
-      title: "체험단/서포터즈 활동",
-      detected: false,
-      description: "체험단이나 서포터즈 관련 언급",
-    },
-  ];
+  ]
 
   // 레이더 차트 데이터 (백엔드 실제 데이터 기반, 가독성 제외)
   const radarData = [
-    {
-      subject: "감정분석",
-      score: 78,
-      description: "광고 관련 키워드와 표현의 집중도",
-    },
-    {
-      subject: "광고성분석",
-      score: 45,
-      description: "정보의 균형성과 객관적 서술 정도",
-    },
-    {
-      subject: "키워드반복",
-      score: 72,
-      description: "특정 키워드의 반복 사용 빈도",
-    },
-    {
-      subject: "블로그반복",
-      score: 35,
-      description: "광고 표시 및 정보 공개의 투명성",
-    },
-  ];
+    { subject: "광고성 지수", score: 78, description: "광고 관련 키워드와 표현의 집중도" },
+    { subject: "내용 객관성", score: 45, description: "정보의 균형성과 객관적 서술 정도" },
+    { subject: "키워드 집중도", score: 72, description: "특정 키워드의 반복 사용 빈도" },
+    { subject: "정보 투명성", score: 35, description: "광고 표시 및 정보 공개의 투명성" },
+  ]
+
+  // 객관성 분석 데이터
+  const objectivityMetrics = [
+    { name: "정보 투명성", score: 35, description: "광고 및 협찬 관계의 명시적 공개 정도" },
+    { name: "균형잡힌 시각", score: 40, description: "장단점을 균형있게 다루는 정도" },
+    { name: "사실 기반 서술", score: 55, description: "주관적 의견보다 사실에 기반한 정도" },
+    { name: "다양한 관점", score: 30, description: "여러 시각에서 주제를 다루는 정도" },
+  ]
+
+  // 2. objectivityMetrics 데이터 아래에 객관성 분석 그래프 데이터 추가
+  const objectivityBarData = [
+    { name: "추천", value: 3, color: "#e5e7eb", ratio: null },
+    { name: "관련제품", value: 2, color: "#e5e7eb", ratio: null },
+    { name: "관련팀", value: 2, color: "#e5e7eb", ratio: null },
+    { name: "검정제품", value: 1, color: "#e5e7eb", ratio: null },
+    { name: "특징", value: 3, color: "#e5e7eb", ratio: null },
+    { name: "효능효과", value: 3, color: "#e5e7eb", ratio: null },
+    { name: "기타이용", value: 2, color: "#e5e7eb", ratio: null },
+    { name: "제품정보", value: 1, color: "#f59e0b", ratio: "1/3\n33%" },
+    { name: "제품판매", value: 3, color: "#e5e7eb", ratio: null },
+    { name: "배송방법", value: 3, color: "#ef4444", ratio: "2/3\n67%" },
+    { name: "포장마감", value: 2, color: "#f59e0b", ratio: "3/6\n50%" },
+    { name: "방식제고", value: 2, color: "#e5e7eb", ratio: null },
+  ]
 
   const handleBack = () => {
-    router.back();
-  };
+    router.back()
+  }
 
   const handleHome = () => {
-    router.push("/");
-  };
+    router.push("/")
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
@@ -406,265 +440,359 @@ export default function DetailedAnalysisPage() {
 
               {/* 키워드 분석 탭 */}
               <TabsContent value="keywords" className="mt-0">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <div className="bg-green-50 p-6 rounded-lg border border-green-200">
-                    <div className="flex items-center gap-2 mb-6">
-                      <Search className="w-6 h-6 text-green-600" />
-                      <h3 className="text-xl font-semibold text-green-800">
-                        핵심 단어는 무엇?
-                      </h3>
+                <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                  <div className="flex items-center gap-2 mb-6">
+                    <Search className="w-6 h-6 text-green-600" />
+                    <h3 className="text-2xl font-semibold text-gray-800">Keyword Repetition Analysis</h3>
+                  </div>
+
+                  {/* 상단 요약 - 2열 레이아웃 */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    {/* 왼쪽 - Radial Progress Chart */}
+                    <div className="flex items-center justify-center">
+                      <RadialProgress
+                        percentage={keywordRepetitionData.repetitionScore}
+                        size={140}
+                        strokeWidth={12}
+                        color="#47C83E"
+                      />
                     </div>
-                    <div className="h-64 mb-4">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={keywordData}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="keyword" tick={{ fontSize: 12 }} />
-                          <YAxis />
-                          <RechartsTooltip
-                            formatter={(value) => [`${value}회`, "언급 횟수"]}
-                          />
-                          <Bar
-                            dataKey="count"
-                            fill="#22c55e"
-                            radius={[4, 4, 0, 0]}
-                          />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                    <div className="bg-orange-50 p-3 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4 text-orange-600" />
-                        <span className="text-sm font-semibold text-orange-800">
-                          키워드 밀도: 높음
-                        </span>
+
+                    {/* 오른쪽 - 주요 지표 */}
+                    <div className="space-y-6">
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <h4 className="text-sm font-medium text-gray-500 mb-2">Main Product Name</h4>
+                        <p className="text-lg font-semibold text-gray-800">{keywordRepetitionData.mainProductName}</p>
+                      </div>
+
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <h4 className="text-sm font-medium text-gray-500 mb-2">Repetition Score</h4>
+                        <p className="text-lg font-semibold text-green-700">{keywordRepetitionData.repetitionScore}%</p>
+                      </div>
+
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <h4 className="text-sm font-medium text-gray-500 mb-2">Top Keywords Average</h4>
+                        <p className="text-lg font-semibold text-gray-800">
+                          {keywordRepetitionData.topKeywordsAverage} mentions
+                        </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-6">
-                    <div className="bg-white p-6 rounded-lg border border-gray-200">
-                      <h4 className="text-lg font-semibold text-gray-800 mb-4">
-                        🔍 주요 키워드 상세 분석
-                      </h4>
-                      <div className="space-y-3">
-                        {keywordData.map((item, index) => (
-                          <div
+                  {/* Word Cloud 섹션 */}
+                  <div className="mb-8">
+                    <h4 className="text-lg font-semibold text-gray-800 mb-4">Word Cloud</h4>
+                    <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                      <div className="flex flex-wrap gap-3 items-center justify-center">
+                        {keywordRepetitionData.wordCloudKeywords.map((keyword, index) => (
+                          <Badge
                             key={index}
-                            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                            className={`${keyword.color} text-white ${keyword.size} px-3 py-2 font-medium hover:scale-105 transition-transform cursor-pointer`}
                           >
-                            <div className="flex items-center gap-3">
-                              <span className="font-medium text-gray-800">
-                                {item.keyword}
-                              </span>
-                              <Badge
-                                className={
-                                  item.category === "광고성"
-                                    ? "bg-red-100 text-red-800"
-                                    : item.category === "상업성"
-                                    ? "bg-orange-100 text-orange-800"
-                                    : "bg-green-100 text-green-800"
-                                }
-                              >
-                                {item.category}
-                              </Badge>
+                            {keyword.word}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 접을 수 있는 상세 정보 섹션 */}
+                  <Collapsible open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+                    <CollapsibleTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-between border-blue-200 text-blue-700 hover:bg-blue-50"
+                      >
+                        <span className="flex items-center gap-2">
+                          <FileText className="w-4 h-4" />
+                          View Details
+                        </span>
+                        {isDetailsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </Button>
+                    </CollapsibleTrigger>
+
+                    <CollapsibleContent className="mt-4">
+                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                        <Table>
+                          <TableHeader>
+                            <TableRow className="bg-gray-50">
+                              <TableHead className="font-semibold text-gray-700">Keyword</TableHead>
+                              <TableHead className="font-semibold text-gray-700">Repetition Count</TableHead>
+                              <TableHead className="font-semibold text-gray-700">Source Product Name</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {keywordRepetitionData.detailsTable.map((row, index) => (
+                              <TableRow key={index} className="hover:bg-gray-50">
+                                <TableCell className="font-medium">{row.keyword}</TableCell>
+                                <TableCell>
+                                  <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                                    {row.count}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="text-gray-600">{row.sourceProduct}</TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </div>
+              </TabsContent>
+
+              {/* 광고성 분석 탭 - 새로운 디자인 */}
+              <TabsContent value="advertisement" className="mt-0">
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="w-3 h-3 bg-green-700 rounded-full"></div>
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    블로그 유사도 분석 결과 (합수명: analyze_blog_similarity)
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* 왼쪽 열 - 기본 정보 및 광고성 점수 */}
+                  <div className="space-y-6">
+                    {/* 기본 정보 카드 */}
+                    <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                      <div className="flex items-center gap-2 mb-4">
+                        <FileCheck className="w-5 h-5 text-orange-500" />
+                        <h4 className="text-lg font-semibold text-gray-800">기본 정보</h4>
+                      </div>
+
+                      <div className="space-y-3 text-sm">
+                        <div className="flex items-start gap-2">
+                          <span className="text-gray-600 min-w-0 flex-shrink-0">블로그 제목:</span>
+                          <span className="text-gray-800">김달의 100% 로맨틱, 네이버 블로그</span>
+                        </div>
+
+                        <div className="flex items-start gap-2">
+                          <span className="text-gray-600 min-w-0 flex-shrink-0">URL:</span>
+                          <a
+                            href={analyzedUrl}
+                            className="text-green-700 hover:underline break-all"
+                          >
+                            https://blog.naver.com/prettydr/223881975188
+                          </a>
+                        </div>
+
+                        <div className="flex items-start gap-2">
+                          <span className="text-gray-600 min-w-0 flex-shrink-0">콘텐츠 길이:</span>
+                          <span className="text-gray-800">2,434자</span>
+                        </div>
+
+                        <div className="flex items-start gap-2">
+                          <span className="text-gray-600 min-w-0 flex-shrink-0">분석 시간:</span>
+                          <span className="text-gray-800">2025-06-06 22:08:31</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 광고성 점수 카드 */}
+                    <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-3 h-3 bg-green-700 rounded-full"></div>
+                        <h4 className="text-lg font-semibold text-gray-800">광고성 점수</h4>
+                      </div>
+
+                      <div className="text-center">
+                        <div className="text-4xl font-bold text-green-600 mb-2">0.4/10</div>
+                        <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
+                          <div className="bg-green-600 h-3 rounded-full" style={{ width: "4%" }}></div>
+                        </div>
+                        <div className="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                          매우 낮음
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 판정 결과 카드 */}
+                    <div className="bg-green-50 p-6 rounded-lg border border-green-200">
+                      <div className="flex items-center gap-2 mb-3">
+                        <AlertTriangle className="w-5 h-5 text-green-600" />
+                        <h4 className="text-lg font-semibold text-green-800">판정</h4>
+                      </div>
+                      <p className="text-green-700 font-medium">일반 콘텐츠 (독창적인 콘텐츠로 광고성 없음)</p>
+                    </div>
+                  </div>
+
+                  {/* 오른쪽 열 - 문장별 상세 분석 결과 */}
+                  <div className="space-y-6">
+                    <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                      <h4 className="text-lg font-semibold text-gray-800 mb-6">문장별 분석 결과</h4>
+
+                      <div className="space-y-8">
+                        {sentenceAnalysisData.map((sentence) => (
+                          <div key={sentence.id} className="border-b border-gray-100 pb-6 last:border-b-0">
+                            <div className="mb-4">
+                              <span className="text-sm font-medium text-gray-600">{sentence.id}.</span>
+                              <p className="text-sm text-gray-800 mt-2 leading-relaxed">"{sentence.text}"</p>
                             </div>
-                            <span className="font-bold text-green-600">
-                              {item.count}회
-                            </span>
+
+                            <div className="space-y-2 text-xs mb-4">
+                              <div className="flex items-center">
+                                <span className="text-gray-500 w-20">동일 문장 비율:</span>
+                                <span className="font-medium">{sentence.duplicateRatio}</span>
+                              </div>
+                              <div className="flex items-center">
+                                <span className="text-gray-500 w-20">높은 유사도 문장 수:</span>
+                                <span className="font-medium">{sentence.similarSentences}</span>
+                              </div>
+                              <div className="flex items-center">
+                                <span className="text-gray-500 w-20">유사 블로그 비율:</span>
+                                <span className="font-medium">{sentence.similarBlogRatio}</span>
+                              </div>
+                              <div className="flex items-center">
+                                <span className="text-gray-500 w-20">문장 광고성 점수:</span>
+                                <span className="font-medium">{sentence.adScore}</span>
+                              </div>
+                            </div>
+
+                            {/* 유사한 블로그가 있는 경우에만 표시 */}
+                            {sentence.similarBlogs && sentence.similarBlogs.length > 0 && (
+                              <div className="mt-4">
+                                <h5 className="text-sm font-semibold text-gray-800 mb-3">유사한 블로그 발견:</h5>
+                                {sentence.similarBlogs.map((blog, index) => (
+                                  <div key={index} className="space-y-2">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm font-medium">
+                                        {index + 1}. {blog.name}
+                                      </span>
+                                      <span className="text-sm text-gray-600">(유사도: {blog.similarity})</span>
+                                    </div>
+                                    <div className="bg-gray-50 p-3 rounded-lg border-l-4 border-green-500">
+                                      <p className="text-xs text-gray-700 leading-relaxed italic">"{blog.quote}"</p>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
                     </div>
-
-                    <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                      <h5 className="font-semibold text-yellow-800 mb-2">
-                        📈 키워드 분석 결과
-                      </h5>
-                      <ul className="text-sm text-yellow-700 space-y-1">
-                        <li>• 평가성 키워드("추천", "리뷰")가 상위권을 차지</li>
-                        <li>• 광고성 키워드("협찬")가 18회 발견됨</li>
-                        <li>• 상업성 키워드("할인", "특가")도 다수 포함</li>
-                      </ul>
-                    </div>
                   </div>
                 </div>
               </TabsContent>
 
-              {/* 광고성 분석 탭 */}
-              <TabsContent value="advertisement" className="mt-0">
-                <div className="space-y-6">
-                  <div className="bg-red-50 p-6 rounded-lg border border-red-200">
-                    <div className="flex items-center gap-2 mb-6">
-                      <AlertTriangle className="w-6 h-6 text-red-600" />
-                      <h3 className="text-xl font-semibold text-red-800">
-                        광고일까 아닐까?
-                      </h3>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                      {adIndicators.map((indicator, index) => (
-                        <div
-                          key={index}
-                          className={`p-4 rounded-lg border-2 ${
-                            indicator.detected
-                              ? "bg-red-50 border-red-200"
-                              : "bg-gray-50 border-gray-200"
-                          }`}
-                        >
-                          <div className="flex items-center gap-3 mb-2">
-                            {indicator.icon}
-                            <span
-                              className={`font-medium ${
-                                indicator.detected
-                                  ? "text-red-800"
-                                  : "text-gray-600"
-                              }`}
-                            >
-                              {indicator.title}
-                            </span>
-                            {indicator.detected && (
-                              <Badge className="bg-red-100 text-red-800">
-                                발견됨
-                              </Badge>
-                            )}
-                          </div>
-                          <p className="text-sm text-gray-600">
-                            {indicator.description}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="bg-white p-6 rounded-lg border border-gray-200">
-                    <h4 className="text-lg font-semibold text-gray-800 mb-4">
-                      🤖 AI가 본 광고 의심 부분 요약
-                    </h4>
-                    <div className="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500">
-                      <p className="text-orange-800 leading-relaxed">
-                        이 게시글은 제품에 대한 과도한 긍정적 표현과 함께 '협찬'
-                        키워드가 다수 발견되었습니다. 특히 할인 정보와 구매
-                        유도성 문구가 포함되어 있어 광고성 콘텐츠로 판단됩니다.
-                        객관적인 단점이나 개선점에 대한 언급이 부족한 점도
-                        주목할 만합니다.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-
-              {/* 객관성 분석 탭 */}
+              {/* 3. 객관성 분석 탭의 내용 수정 - TabsContent value="credibility" 부분을 찾아 수정 */}
+              {/* 객관성 분석 탭 - 새로운 미니멀 디자인 */}
               <TabsContent value="credibility" className="mt-0">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <div className="bg-green-50 p-6 rounded-lg border border-green-200">
-                    <div className="flex items-center gap-2 mb-6">
-                      <Shield className="w-6 h-6 text-green-600" />
-                      <h3 className="text-xl font-semibold text-green-800">
-                        믿을 만한 정보인가?
-                      </h3>
-                    </div>
+                {/* 상단 정보 배너 */}
+                <div className="bg-green-50 p-4 rounded-lg border border-green-200 mb-6">
+                  <p className="text-sm text-green-700">
+                    객관성 분석은 게시글의 균형성, 투명성, 사실 기반 정도를 평가합니다. 점수가 높을수록 더 객관적인
+                    정보를 제공하는 콘텐츠입니다.
+                  </p>
+                </div>
 
-                    <div className="text-center mb-6">
-                      <div className="inline-flex items-center gap-3 px-6 py-4 bg-white rounded-lg border border-green-200">
-                        <div className="text-4xl font-bold text-green-600">
-                          45
-                        </div>
-                        <div className="text-left">
-                          <div className="text-lg font-semibold text-green-800">
-                            객관성 점수
-                          </div>
-                          <div className="text-sm text-green-600">
-                            100점 만점
-                          </div>
-                        </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* 왼쪽 열 - 객관성 점수 및 태그 */}
+                  <div className="space-y-6">
+                    {/* 객관성 점수 카드 */}
+                    <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm text-center">
+                      <div className="text-5xl font-bold text-gray-800 mb-2">45</div>
+                      <div className="text-sm text-gray-500 mb-4">객관성 점수</div>
+                      <div className="inline-block bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+                        보통 수준
                       </div>
                     </div>
 
-                    <div className="space-y-4">
-                      <div className="bg-white p-4 rounded-lg">
-                        <h5 className="font-semibold text-gray-800 mb-2">
-                          📋 주요 브랜드/제품명
-                        </h5>
-                        <div className="flex flex-wrap gap-2">
-                          <Badge className="bg-green-100 text-green-800">
-                            ○○ 미백크림
-                          </Badge>
-                          <Badge className="bg-green-100 text-green-800">
-                            △△ 화장품
-                          </Badge>
-                        </div>
+                    {/* 브랜드/제품명 태그 */}
+                    <div className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
+                      <h5 className="text-sm font-medium text-gray-500 mb-3">주요 브랜드/제품명</h5>
+                      <div className="flex flex-wrap gap-2">
+                        <Badge className="bg-green-100 text-green-800 font-normal">{analyzedData?.aurora_analysis?.brand}</Badge>
                       </div>
+                    </div>
 
-                      <div className="bg-white p-4 rounded-lg">
-                        <h5 className="font-semibold text-gray-800 mb-2">
-                          🏷️ 카테고리
-                        </h5>
-                        <Badge className="bg-green-100 text-green-800">
-                          뷰티/화장품
-                        </Badge>
-                      </div>
+                    {/* 카테고리 태그 */}
+                    <div className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
+                      <h5 className="text-sm font-medium text-gray-500 mb-3">카테고리</h5>
+                      <Badge className="bg-green-100 text-green-800 font-normal">{analyzedData?.aurora_analysis?.category}</Badge>
                     </div>
                   </div>
 
-                  <div className="space-y-6">
-                    <div className="bg-white p-6 rounded-lg border border-gray-200">
-                      <h4 className="text-lg font-semibold text-gray-800 mb-4">
-                        📊 객관성 평가 결과
-                      </h4>
-                      <div className="space-y-4">
-                        <div className="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-500">
-                          <h5 className="font-semibold text-yellow-800 mb-2">
-                            보통 수준의 객관성
-                          </h5>
-                          <p className="text-sm text-yellow-700">
-                            정보의 균형성과 객관성이 보통 수준입니다. 주관적
-                            표현이 많고 다양한 관점에서의 평가가 부족합니다.
-                          </p>
+                  {/* 오른쪽 열 - 객관성 그래프 */}
+                  <div className="lg:col-span-2 space-y-6">
+                    {/* 객관성 그래프 */}
+                    <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                      <h4 className="text-base font-medium text-gray-700 mb-5">객관성 키워드 분석</h4>
+                      <div className="h-80">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart
+                            data={objectivityBarData}
+                            margin={{
+                              top: 5,
+                              right: 30,
+                              left: 20,
+                              bottom: 60,
+                            }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+                            <XAxis dataKey="name" tick={{ fontSize: 11 }} interval={0} angle={-45} textAnchor="end" />
+                            <YAxis domain={[0, 12]} />
+                            <Tooltip
+                              formatter={(value, name, props) => {
+                                const item = props.payload
+                                return [`${value}`, item.ratio ? `비율: ${item.ratio.replace("\n", " ")}` : "수치"]
+                              }}
+                            />
+                            <Bar dataKey="value" fill="#e5e7eb">
+                              {objectivityBarData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                              ))}
+                              {objectivityBarData.map((entry, index) => {
+                                if (entry.ratio) {
+                                  return (
+                                    <text
+                                      key={`text-${index}`}
+                                      x={
+                                        index * (500 / objectivityBarData.length) + 500 / objectivityBarData.length / 2
+                                      }
+                                      y={entry.value * 20 - 15}
+                                      textAnchor="middle"
+                                      fill="#fff"
+                                      fontSize={10}
+                                      fontWeight="bold"
+                                    >
+                                      {entry.ratio.split("\n")[0]}
+                                    </text>
+                                  )
+                                }
+                                return null
+                              })}
+                            </Bar>
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                      <div className="mt-4 text-sm text-gray-600">
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="w-3 h-3 bg-gray-200 rounded-sm"></div>
+                          <span>일반 키워드</span>
                         </div>
-
-                        <div className="space-y-2">
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600">
-                              정보 투명성
-                            </span>
-                            <span className="text-sm font-medium">35%</span>
-                          </div>
-                          <Progress value={35} className="h-2" />
-
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600">
-                              균형잡힌 시각
-                            </span>
-                            <span className="text-sm font-medium">40%</span>
-                          </div>
-                          <Progress value={40} className="h-2" />
-
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600">
-                              사실 기반 서술
-                            </span>
-                            <span className="text-sm font-medium">55%</span>
-                          </div>
-                          <Progress value={55} className="h-2" />
-
-                                                    <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600">
-                              사실 기반 서술
-                            </span>
-                            <span className="text-sm font-medium">55%</span>
-                          </div>
-                          <Progress value={55} className="h-2" />
-                                                    <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600">
-                              사실 기반 서술
-                            </span>
-                            <span className="text-sm font-medium">55%</span>
-                          </div>
-                          <Progress value={55} className="h-2" />
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="w-3 h-3 bg-orange-400 rounded-sm"></div>
+                          <span>주의 필요 (33-50%)</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 bg-red-500 rounded-sm"></div>
+                          <span>높은 광고성 (67% 이상)</span>
                         </div>
                       </div>
                     </div>
 
+                    {/* 게시글 요약 */}
+                    <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                      <h4 className="text-base font-medium text-gray-700 mb-4">게시글 주요 내용 요약</h4>
+                      <div className="bg-yellow-50 p-4 rounded-lg">
+                        <p className="text-sm text-gray-700 leading-relaxed">
+                          겨울철 피부관리를 위한 미백크림 사용 후기를 다루고 있으며, 제품의 효과와 만족도를 강조하고
+                          있습니다. 할인 정보와 구매 링크가 포함되어 있어 상업적 목적이 강한 콘텐츠로 보입니다. 객관적인
+                          단점이나 개선점에 대한 언급이 부족하여 균형잡힌 정보 제공이 미흡합니다.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </TabsContent>
@@ -675,23 +803,14 @@ export default function DetailedAnalysisPage() {
                   <div className="bg-green-50 p-6 rounded-lg border border-green-200">
                     <div className="flex items-center gap-2 mb-6">
                       <TrendingUp className="w-6 h-6 text-green-600" />
-                      <h3 className="text-xl font-semibold text-green-800">
-                        한눈에 종합 비교!
-                      </h3>
+                      <h3 className="text-xl font-semibold text-green-800">한눈에 종합 비교!</h3>
                     </div>
                     <div className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
                         <RadarChart data={radarData}>
                           <PolarGrid />
-                          <PolarAngleAxis
-                            dataKey="subject"
-                            tick={{ fontSize: 11 }}
-                          />
-                          <PolarRadiusAxis
-                            angle={90}
-                            domain={[0, 100]}
-                            tick={{ fontSize: 10 }}
-                          />
+                          <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11 }} />
+                          <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 10 }} />
                           <Radar
                             name="점수"
                             dataKey="score"
@@ -701,10 +820,7 @@ export default function DetailedAnalysisPage() {
                             strokeWidth={2}
                           />
                           <RechartsTooltip
-                            formatter={(value, name, props) => [
-                              `${value}점`,
-                              props.payload.description,
-                            ]}
+                            formatter={(value, name, props) => [`${value}점`, props.payload.description]}
                           />
                         </RadarChart>
                       </ResponsiveContainer>
@@ -716,41 +832,27 @@ export default function DetailedAnalysisPage() {
 
                   <div className="space-y-6">
                     <div className="bg-white p-6 rounded-lg border border-gray-200">
-                      <h4 className="text-lg font-semibold text-gray-800 mb-4">
-                        📈 지표별 상세 해석
-                      </h4>
+                      <h4 className="text-lg font-semibold text-gray-800 mb-4">📈 지표별 상세 해석</h4>
                       <div className="space-y-4">
                         {radarData.map((item, index) => (
-                          <div
-                            key={index}
-                            className="bg-gray-50 p-4 rounded-lg"
-                          >
+                          <div key={index} className="bg-gray-50 p-4 rounded-lg">
                             <div className="flex items-center justify-between mb-2">
-                              <span className="font-medium text-gray-800">
-                                {item.subject}
-                              </span>
-                              <span className="text-lg font-bold text-red-600">
-                                {item.score}/100
-                              </span>
+                              <span className="font-medium text-gray-800">{item.subject}</span>
+                              <span className="text-lg font-bold text-green-600">{item.score}/100</span>
                             </div>
                             <Progress value={item.score} className="h-2 mb-2" />
-                            <p className="text-sm text-gray-600">
-                              {item.description}
-                            </p>
+                            <p className="text-sm text-gray-600">{item.description}</p>
                           </div>
                         ))}
                       </div>
                     </div>
 
                     <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-                      <h5 className="font-semibold text-red-800 mb-2">
-                        ⚠️ 종합 평가
-                      </h5>
+                      <h5 className="font-semibold text-red-800 mb-2">⚠️ 종합 평가</h5>
                       <p className="text-sm text-red-700 leading-relaxed">
-                        광고성 지수와 키워드 집중도가 높고, 내용 객관성과 정보
-                        투명성이 낮아
-                        <strong> 광고성 콘텐츠로 판단</strong>됩니다. 특히 협찬
-                        관련 키워드와 과도한 긍정적 표현이 주요 판단 근거입니다.
+                        광고성 지수와 키워드 집중도가 높고, 내용 객관성과 정보 투명성이 낮아
+                        <strong> 광고성 콘텐츠로 판단</strong>됩니다. 특히 협찬 관련 키워드와 과도한 긍정적 표현이 주요
+                        판단 근거입니다.
                       </p>
                     </div>
                   </div>
