@@ -242,11 +242,11 @@ export default function AnalysisResultPage() {
                 </p>
               </div>
 
-              {/* 광고성 키워드 빈도 */}
+              {/* 광고 점수 */}
               <div className="bg-orange-50 p-6 rounded-lg border-2 border-orange-200">
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg font-semibold text-gray-800">
-                    광고성 키워드 빈도
+                    광고성 점수
                   </h4>
                   <span className="text-2xl font-bold text-orange-600">
                     높음
@@ -259,7 +259,28 @@ export default function AnalysisResultPage() {
                   ></div>
                 </div>
                 <p className="text-sm text-orange-700">
-                  '추천', '협찬' 등 광고 관련 키워드가 22회 발견되었습니다
+                  키워드가 22회 발견되었습니다
+                </p>
+              </div>
+
+              {/* 광고성 키워드 빈도 */}
+              <div className="bg-orange-50 p-6 rounded-lg border-2 border-orange-200">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg font-semibold text-gray-800">
+                    키워드 반복 점수
+                  </h4>
+                  <span className="text-2xl font-bold text-orange-600">
+                    높음
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
+                  <div
+                    className="bg-orange-500 h-3 rounded-full transition-all duration-1000"
+                    style={{ width: "75%" }}
+                  ></div>
+                </div>
+                <p className="text-sm text-orange-700">
+                  키워드가 22회 발견되었습니다
                 </p>
               </div>
 
@@ -269,11 +290,11 @@ export default function AnalysisResultPage() {
                   analyzedData?.athena_analysis?.credibility_score
                 )}-50 p-6 rounded-lg border-2 border-${getRecommnedationColor(
                   analyzedData?.athena_analysis?.credibility_score
-                )}-200 md:col-span-2`}
+                )}-200`}
               >
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg font-semibold text-gray-800">
-                    객관성 수준
+                    광고확률
                   </h4>
                   <span
                     className={`text-2xl font-bold text-${getRecommnedationColor(

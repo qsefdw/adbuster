@@ -98,17 +98,17 @@ export default function DetailedAnalysisPage() {
     repetitionScore: 82.2,
     topKeywordsAverage: 15.4,
     wordCloudKeywords: [
-      { word: "추천", count: 22, color: "bg-red-500", size: "text-2xl" },
-      { word: "협찬", count: 18, color: "bg-orange-500", size: "text-xl" },
-      { word: "리뷰", count: 15, color: "bg-blue-500", size: "text-lg" },
-      { word: "할인", count: 12, color: "bg-green-500", size: "text-base" },
-      { word: "특가", count: 10, color: "bg-purple-500", size: "text-base" },
-      { word: "만족", count: 8, color: "bg-pink-500", size: "text-sm" },
-      { word: "효과", count: 7, color: "bg-indigo-500", size: "text-sm" },
-      { word: "사용", count: 6, color: "bg-yellow-500", size: "text-sm" },
-      { word: "제품", count: 5, color: "bg-teal-500", size: "text-xs" },
-      { word: "피부", count: 4, color: "bg-cyan-500", size: "text-xs" },
-      { word: "크림", count: 3, color: "bg-rose-500", size: "text-xs" },
+      { word: "후원", count: 22, color: "bg-red-500", size: "text-2xl" },
+      { word: "구매유도", count: 18, color: "bg-orange-500", size: "text-xl" },
+      { word: "관련링크", count: 15, color: "bg-blue-500", size: "text-lg" },
+      { word: "감정분석", count: 12, color: "bg-green-500", size: "text-base" },
+      { word: "노부정", count: 10, color: "bg-purple-500", size: "text-base" },
+      { word: "슬로건", count: 8, color: "bg-pink-500", size: "text-sm" },
+      { word: "기관인용", count: 7, color: "bg-indigo-500", size: "text-sm" },
+      { word: "체험전후", count: 6, color: "bg-yellow-500", size: "text-sm" },
+      { word: "제품반복", count: 5, color: "bg-teal-500", size: "text-xs" },
+      { word: "해시태그", count: 4, color: "bg-cyan-500", size: "text-xs" },
+      { word: "광고이모지", count: 3, color: "bg-rose-500", size: "text-xs" },
       { word: "브랜드", count: 2, color: "bg-amber-500", size: "text-xs" },
     ],
     detailsTable: [
@@ -172,18 +172,18 @@ export default function DetailedAnalysisPage() {
 
   // 2. objectivityMetrics 데이터 아래에 객관성 분석 그래프 데이터 추가
   const objectivityBarData = [
-    { name: "추천", value: 3, color: "#e5e7eb", ratio: null },
-    { name: "관련제품", value: 2, color: "#e5e7eb", ratio: null },
-    { name: "관련팀", value: 2, color: "#e5e7eb", ratio: null },
-    { name: "검정제품", value: 1, color: "#e5e7eb", ratio: null },
-    { name: "특징", value: 3, color: "#e5e7eb", ratio: null },
-    { name: "효능효과", value: 3, color: "#e5e7eb", ratio: null },
-    { name: "기타이용", value: 2, color: "#e5e7eb", ratio: null },
-    { name: "제품정보", value: 1, color: "#f59e0b", ratio: "1/3\n33%" },
-    { name: "제품판매", value: 3, color: "#e5e7eb", ratio: null },
-    { name: "배송방법", value: 3, color: "#ef4444", ratio: "2/3\n67%" },
-    { name: "포장마감", value: 2, color: "#f59e0b", ratio: "3/6\n50%" },
-    { name: "방식제고", value: 2, color: "#e5e7eb", ratio: null },
+    { name: "후원", value: 3, color: "#e5e7eb", ratio: null },
+    { name: "구매유도", value: 2, color: "#e5e7eb", ratio: null },
+    { name: "관련링크", value: 2, color: "#e5e7eb", ratio: null },
+    { name: "감정분석", value: 1, color: "#e5e7eb", ratio: null },
+    { name: "노부정", value: 3, color: "#e5e7eb", ratio: null },
+    { name: "슬로건", value: 3, color: "#e5e7eb", ratio: null },
+    { name: "기관인용", value: 2, color: "#e5e7eb", ratio: null },
+    { name: "체험전후", value: 1, color: "#f59e0b", ratio: "1/3\n33%" },
+    { name: "제품반복", value: 3, color: "#e5e7eb", ratio: null },
+    { name: "해시태그", value: 3, color: "#ef4444", ratio: "2/3\n67%" },
+    { name: "광고이모지", value: 2, color: "#f59e0b", ratio: "3/6\n50%" },
+    { name: "명시광고", value: 2, color: "#e5e7eb", ratio: null },
   ]
 
   const handleBack = () => {
@@ -756,10 +756,6 @@ export default function DetailedAnalysisPage() {
                         </ResponsiveContainer>
                       </div>
                       <div className="mt-4 text-sm text-gray-600">
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className="w-3 h-3 bg-gray-200 rounded-sm"></div>
-                          <span>일반 키워드</span>
-                        </div>
                         <div className="flex items-center gap-2 mb-1">
                           <div className="w-3 h-3 bg-orange-400 rounded-sm"></div>
                           <span>주의 필요 (33-50%)</span>
