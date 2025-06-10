@@ -49,7 +49,7 @@ export default function AnalysisResultPage() {
 
     if (positive_score > 80) return "긍정적인 표현이 과하게 높습니다.";
 
-    if (positive_score > 60) return "긍정적인 표현이 현저히 높습니다.";
+    if (positive_score > 60) return "긍정적인 표현이 상당히 높습니다.";
 
     return "긍정적인 표현이 적당하게 되어있습니다.";
   };

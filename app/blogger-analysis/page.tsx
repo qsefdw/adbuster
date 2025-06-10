@@ -1,37 +1,17 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Search } from "lucide-react";
-import {
-  Bar,
-  BarChart,
-  XAxis,
-  YAxis,
-  Pie,
-  PieChart,
-  Cell,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-} from "recharts";
+import { useState } from "react"
+import { Search } from "lucide-react"
+import { Bar, BarChart, XAxis, YAxis, Pie, PieChart, Cell, Line, LineChart, ResponsiveContainer } from "recharts"
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // 샘플 데이터
 const sampleAnalysisData = {
@@ -45,7 +25,7 @@ const sampleAnalysisData = {
   topCategories: ["전자제품", "뷰티", "패션"],
   topAdItems: ["구매유도", "슬로건", "후원"],
   sponsoredPosts: 3,
-};
+}
 
 const postScoresData = [
   { title: "최신 스마트폰 리뷰", score: 18, level: "높음" },
@@ -56,14 +36,14 @@ const postScoresData = [
   { title: "홈카페 만들기", score: 12, level: "주의" },
   { title: "운동 루틴", score: 5, level: "낮음" },
   { title: "뷰티 제품 체험", score: 19, level: "높음" },
-];
+]
 
 const adItemsData = [
   { name: "구매유도", value: 35, fill: "hsl(var(--chart-1))" },
   { name: "슬로건", value: 28, fill: "hsl(var(--chart-2))" },
   { name: "후원", value: 22, fill: "hsl(var(--chart-3))" },
   { name: "브랜드언급", value: 15, fill: "hsl(var(--chart-4))" },
-];
+]
 
 const trendData = [
   { date: "2024-01", score: 8 },
@@ -72,7 +52,7 @@ const trendData = [
   { date: "2024-04", score: 18 },
   { date: "2024-05", score: 14 },
   { date: "2024-06", score: 20 },
-];
+]
 
 const detailedPosts = [
   {
@@ -102,43 +82,39 @@ const detailedPosts = [
     slogan: "-",
     adItems: ["자연스러운 언급: 1점"],
   },
-];
+]
 
 export default function Component() {
-  const [blogUrl, setBlogUrl] = useState("");
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [showResults, setShowResults] = useState(true);
+  const [blogUrl, setBlogUrl] = useState("")
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [showResults, setShowResults] = useState(false)
 
   const handleAnalyze = async () => {
-    setIsAnalyzing(true);
+    setIsAnalyzing(true)
     // 실제로는 여기서 API 호출
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    setIsAnalyzing(false);
-    setShowResults(true);
-  };
+    await new Promise((resolve) => setTimeout(resolve, 3000))
+    setIsAnalyzing(false)
+    setShowResults(true)
+  }
 
   const getScoreColor = (level: string) => {
     switch (level) {
       case "높음":
-        return "hsl(var(--destructive))";
+        return "hsl(var(--destructive))"
       case "주의":
-        return "hsl(var(--warning))";
+        return "hsl(var(--warning))"
       default:
-        return "hsl(var(--primary))";
+        return "hsl(var(--primary))"
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 p-4">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* 헤더 */}
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold text-gray-900">
-            📝 블로그 리서치
-          </h1>
-          <p className="text-lg text-gray-600">
-            네이버 블로그의 광고성향과 패턴을 자동으로 분석합니다
-          </p>         
+          <h1 className="text-4xl font-bold text-gray-900">📝 블로그 종합 분석</h1>
+          <p className="text-lg text-gray-600">네이버 블로그의 광고성향과 패턴을 자동으로 분석합니다</p>
         </div>
 
         {/* 입력 영역 */}
@@ -148,9 +124,7 @@ export default function Component() {
               <Search className="w-5 h-5" />
               블로그 URL 입력
             </CardTitle>
-            <CardDescription>
-              분석하고 싶은 네이버 블로그의 메인 URL을 입력해 주세요.
-            </CardDescription>
+            <CardDescription>분석하고 싶은 네이버 블로그의 메인 URL을 입력해 주세요.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Input
@@ -183,30 +157,24 @@ export default function Component() {
             {/* 종합 분석 요약 */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  📊 종합 분석 요약
-                </CardTitle>
+                <CardTitle className="flex items-center gap-2">📊 종합 분석 요약</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="space-y-2">
                     <p className="text-sm text-gray-600">분석 대상</p>
-                    <p className="font-medium break-all">
-                      {sampleAnalysisData.blogUrl}
-                    </p>
+                    <p className="font-medium break-all">{sampleAnalysisData.blogUrl}</p>
                   </div>
                   <div className="space-y-2">
                     <p className="text-sm text-gray-600">분석 게시물 수</p>
                     <p className="font-medium">
-                      {sampleAnalysisData.analyzedPosts} /{" "}
-                      {sampleAnalysisData.totalPosts}
+                      {sampleAnalysisData.analyzedPosts} / {sampleAnalysisData.totalPosts}
                     </p>
                   </div>
                   <div className="space-y-2">
                     <p className="text-sm text-gray-600">평균 광고성 점수</p>
                     <p className="font-medium">
-                      {sampleAnalysisData.averageScore} / 34점 (
-                      {sampleAnalysisData.averagePercentage}%)
+                      {sampleAnalysisData.averageScore} / 34점 ({sampleAnalysisData.averagePercentage}%)
                     </p>
                   </div>
                   <div className="space-y-2">
@@ -221,9 +189,7 @@ export default function Component() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="space-y-2">
-                    <p className="text-sm text-gray-600">
-                      가장 자주 언급된 브랜드
-                    </p>
+                    <p className="text-sm text-gray-600">가장 자주 언급된 브랜드</p>
                     <div className="flex flex-wrap gap-1">
                       {sampleAnalysisData.topBrands.map((brand, index) => (
                         <Badge key={index} variant="outline">
@@ -233,23 +199,17 @@ export default function Component() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-sm text-gray-600">
-                      가장 자주 다룬 카테고리
-                    </p>
+                    <p className="text-sm text-gray-600">가장 자주 다룬 카테고리</p>
                     <div className="flex flex-wrap gap-1">
-                      {sampleAnalysisData.topCategories.map(
-                        (category, index) => (
-                          <Badge key={index} variant="outline">
-                            {category}
-                          </Badge>
-                        )
-                      )}
+                      {sampleAnalysisData.topCategories.map((category, index) => (
+                        <Badge key={index} variant="outline">
+                          {category}
+                        </Badge>
+                      ))}
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-sm text-gray-600">
-                      가장 점수가 높은 광고 항목
-                    </p>
+                    <p className="text-sm text-gray-600">가장 점수가 높은 광고 항목</p>
                     <div className="flex flex-wrap gap-1">
                       {sampleAnalysisData.topAdItems.map((item, index) => (
                         <Badge key={index} variant="destructive">
@@ -260,9 +220,7 @@ export default function Component() {
                   </div>
                   <div className="space-y-2">
                     <p className="text-sm text-gray-600">🚨 후원/원고료 분석</p>
-                    <p className="font-medium text-red-600">
-                      {sampleAnalysisData.sponsoredPosts}개 게시물 의심
-                    </p>
+                    <p className="font-medium text-red-600">{sampleAnalysisData.sponsoredPosts}개 게시물 의심</p>
                   </div>
                 </div>
               </CardContent>
@@ -271,17 +229,24 @@ export default function Component() {
             {/* 시각화 리포트 */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  📈 시각화 리포트
-                </CardTitle>
+                <CardTitle className="flex items-center gap-2">📈 시각화 리포트</CardTitle>
+                <CardDescription>차트를 클릭하여 상세 분석 결과를 확인하세요</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* 포스트별 광고성 점수 */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">
-                      포스트별 광고성 점수
-                    </h3>
+                <Tabs defaultValue="post-scores" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="post-scores">포스트별 점수</TabsTrigger>
+                    <TabsTrigger value="ad-items">광고성 항목</TabsTrigger>
+                    <TabsTrigger value="trend">시간별 트렌드</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="post-scores" className="space-y-4 mt-6">
+                    <div className="text-center space-y-2">
+                      <h3 className="text-xl font-semibold">포스트별 광고성 점수</h3>
+                      <p className="text-sm text-gray-600">
+                        분석된 각 게시물의 광고성 점수를 비교하여 어떤 글이 가장 광고성이 높은지 직관적으로 보여줍니다
+                      </p>
+                    </div>
                     <ChartContainer
                       config={{
                         score: {
@@ -289,78 +254,83 @@ export default function Component() {
                           color: "hsl(var(--chart-1))",
                         },
                       }}
-                      className="h-[300px]"
+                      className="h-[400px]"
                     >
                       <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={postScoresData}>
+                        <BarChart data={postScoresData} margin={{ top: 20, right: 30, left: 20, bottom: 80 }}>
                           <XAxis
                             dataKey="title"
-                            tick={{ fontSize: 10 }}
+                            tick={{ fontSize: 12 }}
                             angle={-45}
                             textAnchor="end"
-                            height={80}
+                            height={100}
+                            interval={0}
                           />
                           <YAxis />
                           <ChartTooltip content={<ChartTooltipContent />} />
-                          <Bar
-                            dataKey="score"
-                            fill={(entry) => getScoreColor(entry.level)}
-                            radius={[4, 4, 0, 0]}
-                          />
+                          <Bar dataKey="score" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
                         </BarChart>
                       </ResponsiveContainer>
                     </ChartContainer>
-                  </div>
+                  </TabsContent>
 
-                  {/* 광고성 항목별 누적 점수 */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">
-                      광고성 항목별 누적 점수
-                    </h3>
-                    <ChartContainer
-                      config={{
-                        구매유도: {
-                          label: "구매유도",
-                          color: "hsl(var(--chart-1))",
-                        },
-                        슬로건: {
-                          label: "슬로건",
-                          color: "hsl(var(--chart-2))",
-                        },
-                        후원: { label: "후원", color: "hsl(var(--chart-3))" },
-                        브랜드언급: {
-                          label: "브랜드언급",
-                          color: "hsl(var(--chart-4))",
-                        },
-                      }}
-                      className="h-[300px]"
-                    >
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={adItemsData}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={60}
-                            outerRadius={100}
-                            paddingAngle={5}
-                            dataKey="value"
-                          >
-                            {adItemsData.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.fill} />
-                            ))}
-                          </Pie>
-                          <ChartTooltip content={<ChartTooltipContent />} />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </ChartContainer>
-                  </div>
+                  <TabsContent value="ad-items" className="space-y-4 mt-6">
+                    <div className="text-center space-y-2">
+                      <h3 className="text-xl font-semibold">광고성 항목별 누적 점수</h3>
+                      <p className="text-sm text-gray-600">
+                        전체 분석에서 어떤 광고성 지표가 가장 높은 점수를 차지했는지 분포를 보여줍니다
+                      </p>
+                    </div>
+                    <div className="flex justify-center">
+                      <ChartContainer
+                        config={{
+                          구매유도: { label: "구매유도", color: "hsl(var(--chart-1))" },
+                          슬로건: { label: "슬로건", color: "hsl(var(--chart-2))" },
+                          후원: { label: "후원", color: "hsl(var(--chart-3))" },
+                          브랜드언급: { label: "브랜드언급", color: "hsl(var(--chart-4))" },
+                        }}
+                        className="h-[400px] w-[400px]"
+                      >
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie
+                              data={adItemsData}
+                              cx="50%"
+                              cy="50%"
+                              innerRadius={80}
+                              outerRadius={140}
+                              paddingAngle={5}
+                              dataKey="value"
+                            >
+                              {adItemsData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.fill} />
+                              ))}
+                            </Pie>
+                            <ChartTooltip content={<ChartTooltipContent />} />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </ChartContainer>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                      {adItemsData.map((item, index) => (
+                        <div key={index} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                          <div className="w-4 h-4 rounded-full" style={{ backgroundColor: item.fill }} />
+                          <div>
+                            <p className="font-medium text-sm">{item.name}</p>
+                            <p className="text-xs text-gray-600">{item.value}점</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
 
-                  {/* 시간순 광고성 점수 트렌드 */}
-                  <div className="space-y-4 lg:col-span-2">
-                    <h3 className="text-lg font-semibold">
-                      시간순 광고성 점수 트렌드
-                    </h3>
+                  <TabsContent value="trend" className="space-y-4 mt-6">
+                    <div className="text-center space-y-2">
+                      <h3 className="text-xl font-semibold">시간순 광고성 점수 트렌드</h3>
+                      <p className="text-sm text-gray-600">
+                        게시물 작성 날짜에 따른 광고성 점수의 변화를 추적하여 블로그의 광고성 패턴 변화를 파악합니다
+                      </p>
+                    </div>
                     <ChartContainer
                       config={{
                         score: {
@@ -368,10 +338,10 @@ export default function Component() {
                           color: "hsl(var(--chart-1))",
                         },
                       }}
-                      className="h-[200px]"
+                      className="h-[400px]"
                     >
                       <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={trendData}>
+                        <LineChart data={trendData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                           <XAxis dataKey="date" />
                           <YAxis />
                           <ChartTooltip content={<ChartTooltipContent />} />
@@ -379,49 +349,41 @@ export default function Component() {
                             type="monotone"
                             dataKey="score"
                             stroke="hsl(var(--chart-1))"
-                            strokeWidth={3}
-                            dot={{
-                              fill: "hsl(var(--chart-1))",
-                              strokeWidth: 2,
-                              r: 4,
-                            }}
+                            strokeWidth={4}
+                            dot={{ fill: "hsl(var(--chart-1))", strokeWidth: 2, r: 6 }}
+                            activeDot={{ r: 8, stroke: "hsl(var(--chart-1))", strokeWidth: 2 }}
                           />
                         </LineChart>
                       </ResponsiveContainer>
                     </ChartContainer>
-                  </div>
-                </div>
+                    <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mt-4">
+                      {trendData.map((item, index) => (
+                        <div key={index} className="text-center p-3 bg-gray-50 rounded-lg">
+                          <p className="font-medium text-sm">{item.date}</p>
+                          <p className="text-lg font-bold text-blue-600">{item.score}점</p>
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
 
             {/* 포스트별 상세 분석 */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  📋 포스트별 상세 분석
-                </CardTitle>
+                <CardTitle className="flex items-center gap-2">📋 포스트별 상세 분석</CardTitle>
               </CardHeader>
               <CardContent>
                 <ScrollArea className="h-[400px] w-full">
                   <div className="space-y-4">
                     {detailedPosts.map((post, index) => (
-                      <div
-                        key={index}
-                        className="border rounded-lg p-4 space-y-3"
-                      >
+                      <div key={index} className="border rounded-lg p-4 space-y-3">
                         <div className="flex items-start justify-between">
                           <h4 className="font-semibold text-lg">
                             {index + 1}. {post.title}
                           </h4>
-                          <Badge
-                            variant={
-                              post.score > 15
-                                ? "destructive"
-                                : post.score > 10
-                                ? "secondary"
-                                : "default"
-                            }
-                          >
+                          <Badge variant={post.score > 15 ? "destructive" : post.score > 10 ? "secondary" : "default"}>
                             {post.score}/34점
                           </Badge>
                         </div>
@@ -429,14 +391,13 @@ export default function Component() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                           <div>
                             <p>
-                              <span className="font-medium">작성일:</span>{" "}
-                              {post.date}
+                              <span className="font-medium">작성일:</span> {post.date}
                             </p>
                             <p>
                               <span className="font-medium">URL:</span>
                               <a
                                 href={post.url}
-                                className="text-green-600 hover:underline ml-1"
+                                className="text-blue-600 hover:underline ml-1"
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >
@@ -446,27 +407,19 @@ export default function Component() {
                           </div>
                           <div>
                             <p>
-                              <span className="font-medium">브랜드:</span>{" "}
-                              {post.brand}
+                              <span className="font-medium">브랜드:</span> {post.brand}
                             </p>
                             <p>
-                              <span className="font-medium">슬로건:</span>{" "}
-                              {post.slogan}
+                              <span className="font-medium">슬로건:</span> {post.slogan}
                             </p>
                           </div>
                         </div>
 
                         <div>
-                          <p className="font-medium text-sm mb-2">
-                            광고 점수 항목:
-                          </p>
+                          <p className="font-medium text-sm mb-2">광고 점수 항목:</p>
                           <div className="flex flex-wrap gap-2">
                             {post.adItems.map((item, itemIndex) => (
-                              <Badge
-                                key={itemIndex}
-                                variant="outline"
-                                className="text-xs"
-                              >
+                              <Badge key={itemIndex} variant="outline" className="text-xs">
                                 {item}
                               </Badge>
                             ))}
@@ -482,5 +435,5 @@ export default function Component() {
         )}
       </div>
     </div>
-  );
+  )
 }

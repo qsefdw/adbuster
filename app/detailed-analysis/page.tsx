@@ -62,21 +62,18 @@ export default function DetailedAnalysisPage() {
 
   const getPositiveText = (positive_score: number) => {
     if (positive_score > 80)
-      return "일반적인 리뷰(50-60%)보다 많이 높은 수준입니다.";
+      return "일반적인 리뷰(50-60%)보다 과하게 높은 수준입니다.";
 
     if (positive_score > 50)
-      return "일반적인 리뷰(50-60%)보다 현저히 높은 수준입니다.";
+      return "일반적인 리뷰(50-60%)보다 상당히 높은 수준입니다.";
 
     return "일반적인 리뷰(50-60%)보다 적당한 수준입니다.";
   };
 
   const getNegativeText = (negative_score: number) => {
-    if (negative_score < 10) return "균형잡힌 시각이 부족해요";
+    if (negative_score < 25) return "부정적 의견이 25%미만으로 매우 낮아 객관적인 평가가 부족할 수 있어요.";
 
-    if (negative_score < 30)
-      return "일반적인 리뷰(30-50%)보다 현저히 낮은 수준입니다.";
-
-    return "일반적인 리뷰(50-60%)보다 적당한 수준입니다.";
+    return "부정적 의견이 적당하게 있어요.";
   };
 
   const getadtext = (average_ad_score: number) => {
@@ -545,18 +542,6 @@ export default function DetailedAnalysisPage() {
                               )
                             )}
                           </h5>
-                          <p className="text-sm text-yellow-700">
-                            부정적 의견이{" "}
-                            {Number(
-                              (
-                                (analyzedData?.sentiment_analysis
-                                  ?.overall_sentiment?.negative_score ?? 0) *
-                                100
-                              ).toFixed(0)
-                            )}
-                            %미만으로 매우 낮아 객관적인 평가가 부족할 수
-                            있어요.
-                          </p>
                         </div>
                       </div>
                     </div>
