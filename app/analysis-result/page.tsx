@@ -39,41 +39,123 @@ export default function AnalysisResultPage() {
 
     if (positive_score > 80) return "과도한 긍정적 표현";
 
-    if (positive_score > 50) return "높은 긍정적 표현";
+    if (positive_score > 60) return "높은 긍정적 표현";
 
     return "적당한 긍정적 표현";
+  };
+
+  const getPositiveword = (positive_score) => {
+    if (isNaN(positive_score)) return "API를 불러오는 중 에러가 발생했습니다.";
+
+    if (positive_score > 80) return "긍정적인 표현이 과하게 높습니다.";
+
+    if (positive_score > 60) return "긍정적인 표현이 현저히 높습니다.";
+
+    return "긍정적인 표현이 적당하게 되어있습니다.";
+  };
+
+  const getkeywordExpression = (percentage) => {
+    if (isNaN(percentage)) return "API를 불러오는 중 에러가 발생했습니다.";
+
+    if (percentage > 80) return " 키워드 반복이 과하게 나타납니다.";
+
+    if (percentage > 60) return "키워드 반복 횟수가 높습니다.";
+
+    return "일반적은 글입니다.";
+  };
+
+  const getkeywordColor = (percentage) => {
+    if (isNaN(percentage)) return "gray";
+
+    if (percentage >= 80) return "red";
+
+    if (percentage >= 60) return "orange";
+
+    if (percentage >= 40) return "yellow";
+
+    return "green";
   };
 
   const getPositiveColor = (positive_score) => {
     if (isNaN(positive_score)) return "gray";
 
-    if (positive_score > 80) return "red";
+    if (positive_score >= 80) return "red";
 
-    if (positive_score > 50) return "orange";
+    if (positive_score >= 60) return "orange";
 
-    return "yellow";
+    if (positive_score >= 40) return "yellow";
+
+    return "green";
   };
 
-  const getRecommnedationExpression = (credibility_score) => {
-    if (credibility_score == null)
-      return "API를 불러오는 중 에러가 발생했습니다.";
+  const getRecommnedationExpression = (ad_percentage) => {
+    if (ad_percentage == null) return "API를 불러오는 중 에러가 발생했습니다.";
 
-    if (credibility_score >= 7) return "높음";
+    if (ad_percentage >= 58.8) return "매우 높음";
 
-    if (credibility_score >= 4) return "보통";
+    if (ad_percentage >= 29.4) return "주의";
 
-    return "낮음";
+    if (ad_percentage >= 14.7) return "신뢰";
+
+    return "매우신뢰";
   };
 
-  const getRecommnedationColor = (credibility_score) => {
-    if (credibility_score == null) return "gray";
+  const getRecommnedationColor = (ad_percentage) => {
+    if (ad_percentage == null) return "gray";
 
-    if (credibility_score >= 7) return "red";
+    if (ad_percentage >= 58.8) return "red";
 
-    if (credibility_score >= 4) return "orange";
+    if (ad_percentage >= 29.4) return "orange";
 
-    return "yello";
+    if (ad_percentage >= 14.7) return "yellow";
+
+    return "green";
   };
+
+  const getRecommnedationword = (ad_percentage) => {
+    if (ad_percentage == null) return "오류입니다.";
+    if (ad_percentage >= 58.8) return "명백한 광고글입니다.";
+    if (ad_percentage >= 29.4) return "광고글로 의심됩니다.";
+    if (ad_percentage >= 14.7) return "약간의 광고글일 확률이 있습니다.";
+    return "광고글이 아닙니다.";
+  };
+
+  const getGradeIcon = (final_score) => {
+    if (final_score >= 80) return "🟢";
+    if (final_score >= 60) return "🟡";
+    if (final_score >= 40) return "🟠";
+    return "🔴";
+  };
+
+  const getGradeExpression = (final_score) => {
+    if (final_score >= 80) return "매우 신뢰";
+    if (final_score >= 60) return "신뢰";
+    if (final_score >= 40) return "주의";
+    return "경고";
+  };
+
+  const getGradeColor = (final_score) => {
+    if (final_score >= 80) return "green";
+    if (final_score >= 60) return "yellow";
+    if (final_score >= 40) return "orange";
+    return "red";
+  };
+
+  const getadColor = (average_ad_score) => {
+    if (average_ad_score >= 80) return "red";
+    if (average_ad_score >= 50) return "orange";
+    if (average_ad_score >= 30) return "yellow";
+    return "green";
+  };
+
+  const getadword = (average_ad_score) => {
+    if (isNaN(average_ad_score)) return "API를 불러오는 중 에러가 발생했습니다.";
+    if (average_ad_score >= 80) return "명백한 광고성 콘텐츠입니다.";
+    if (average_ad_score >= 50) return "광고성 의심됩니다.";
+    if (average_ad_score >= 30) return "약간의 광고성이 의심됩니다.";
+    return "독창적인 콘텐츠로 광고성이 없습니다.";
+  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
@@ -132,47 +214,42 @@ export default function AnalysisResultPage() {
         <Card className="mb-8 shadow-xl border-0 bg-white">
           <CardContent className="p-8 text-center">
             <div className="mb-8">
-              {analyzedData?.adbuster_final_score_analysis?.grade ==
-              "🟡 신뢰" ? (
-                <>
-                  <div className="inline-flex items-center gap-4 px-10 py-6 bg-yellow-100 border-3 border-yellow-300 rounded-2xl shadow-lg">
-                    <div className="text-6xl">🟡</div>
-                    <div className="text-left">
-                      <div className="text-3xl font-bold text-yellow-800 mb-1">
-                        신뢰
-                      </div>
-                      <div className="text-lg text-yellow-700">
-                        신뢰할 수 있는 글입니다.
-                      </div>
-                    </div>
+              <div
+                className={`inline-flex items-center gap-4 px-10 py-6 bg-${getGradeColor(
+                  analyzedData?.final_score?.final_score ?? 0
+                )}-100 border-3 border-${getGradeColor(
+                  analyzedData?.final_score?.final_score ?? 0
+                )}-300 rounded-2xl shadow-lg`}
+              >
+                <div className="text-6xl">
+                  {getGradeIcon(analyzedData?.final_score?.final_score ?? 0)}
+                </div>
+                <div className="text-left">
+                  <div
+                    className={`text-3xl font-bold text-${getGradeColor(
+                      analyzedData?.final_score?.final_score ?? 0
+                    )}-800 mb-1`}
+                  >
+                    {getGradeExpression(
+                      analyzedData?.final_score?.final_score ?? 0
+                    )}
                   </div>
-                </>
-              ) : (
-                <>
-                  <div className="inline-flex items-center gap-4 px-10 py-6 bg-red-100 border-3 border-red-300 rounded-2xl shadow-lg">
-                    <div className="text-6xl">🔴</div>
-                    <div className="text-left">
-                      <div className="text-3xl font-bold text-red-800 mb-1">
-                        광고 의심
-                      </div>
-                      <div className="text-lg text-red-700">
-                        광고성 요소가 다수 발견되어 주의가 필요합니다
-                      </div>
-                    </div>
+                  <div className="text-lg text-yellow-700">
+                    신뢰할 수 있는 글입니다.
                   </div>
-                </>
-              )}
+                </div>
+              </div>
             </div>
 
             {/* 종합 점수 */}
             <div className="mb-8">
               <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                종합 광고 가능성
+                종합 신뢰 가능성
               </h3>
               <CircularProgress
                 percentage={(
-                  analyzedData?.adbuster_final_score_analysis?.final_score ?? 0
-                ).toFixed(1)}
+                  analyzedData?.final_score?.final_score ?? 0
+                ).toFixed(0)}
               />
             </div>
           </CardContent>
@@ -191,28 +268,28 @@ export default function AnalysisResultPage() {
               {/* 긍정적 표현 비율 */}
               <div
                 className={`bg-${getPositiveColor(
-                  analyzedData?.athena_analysis?.azure_overall_sentiment
+                  analyzedData?.sentiment_analysis?.overall_sentiment
                     ?.positive_score * 100
                 )}-50 p-6 rounded-lg border-2 border-${getPositiveColor(
-                  analyzedData?.athena_analysis?.azure_overall_sentiment
+                  analyzedData?.sentiment_analysis?.overall_sentiment
                     ?.positive_score * 100
                 )}-200`}
               >
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg font-semibold text-gray-800">
                     {getPositiveExpression(
-                      analyzedData?.athena_analysis?.azure_overall_sentiment
+                      analyzedData?.sentiment_analysis?.overall_sentiment
                         ?.positive_score * 100
                     )}
                   </h4>
                   <span
                     className={`text-2xl font-bold text-${getPositiveColor(
-                      analyzedData?.athena_analysis?.azure_overall_sentiment
+                      analyzedData?.sentiment_analysis?.overall_sentiment
                         ?.positive_score * 100
                     )}-600`}
                   >
                     {(
-                      (analyzedData?.athena_analysis?.azure_overall_sentiment
+                      (analyzedData?.sentiment_analysis?.overall_sentiment
                         ?.positive_score ?? 0) * 100
                     ).toFixed(0)}
                     %
@@ -221,12 +298,12 @@ export default function AnalysisResultPage() {
                 <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
                   <div
                     className={`bg-${getPositiveColor(
-                      analyzedData?.athena_analysis?.azure_overall_sentiment
+                      analyzedData?.sentiment_analysis?.overall_sentiment
                         ?.positive_score * 100
                     )}-500 h-3 rounded-full transition-all duration-1000`}
                     style={{
                       width: `${
-                        (analyzedData?.athena_analysis?.azure_overall_sentiment
+                        (analyzedData?.sentiment_analysis?.overall_sentiment
                           ?.positive_score ?? 0) * 100
                       }%`,
                     }}
@@ -234,62 +311,110 @@ export default function AnalysisResultPage() {
                 </div>
                 <p
                   className={`text-sm text-${getPositiveColor(
-                    analyzedData?.athena_analysis?.azure_overall_sentiment
+                    analyzedData?.sentiment_analysis?.overall_sentiment
                       ?.positive_score * 100
                   )}-700`}
                 >
-                  일반적인 리뷰보다 긍정적 표현이 현저히 높습니다
+                  {getPositiveword(
+                      analyzedData?.sentiment_analysis?.overall_sentiment
+                        ?.positive_score * 100
+                    )}
                 </p>
               </div>
 
               {/* 광고 점수 */}
-              <div className="bg-orange-50 p-6 rounded-lg border-2 border-orange-200">
+              <div
+                className={`bg-${getadColor(
+                  analyzedData?.similarity_analysis?.average_ad_score
+                )}-50 p-6 rounded-lg border-2 border-${getadColor(
+                  analyzedData?.similarity_analysis?.average_ad_score
+                )}-200`}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg font-semibold text-gray-800">
                     광고성 점수
                   </h4>
-                  <span className="text-2xl font-bold text-orange-600">
-                    높음
+                  <span
+                    className={`text-2xl font-bold text-${getadColor(
+                      analyzedData?.similarity_analysis?.average_ad_score
+                    )}-600`}
+                  >
+                    {(
+                      (analyzedData?.similarity_analysis?.average_ad_score ?? 0)
+                    ).toFixed(1)}/10
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
                   <div
-                    className="bg-orange-500 h-3 rounded-full transition-all duration-1000"
-                    style={{ width: "75%" }}
+                    className={`bg-${getadColor(
+                      analyzedData?.similarity_analysis?.average_ad_score
+                    )}-500 h-3 rounded-full transition-all duration-1000`}
+                    style={{
+                      width: `${
+                        analyzedData?.similarity_analysis?.average_ad_score ?? 0
+                      }%`,
+                    }}
                   ></div>
                 </div>
-                <p className="text-sm text-orange-700">
-                  키워드가 22회 발견되었습니다
+                <p
+                  className={`text-sm text-${getadColor(
+                    analyzedData?.similarity_analysis?.average_ad_score
+                  )}-700`}
+                >
+                  {getadword(analyzedData?.similarity_analysis?.average_ad_score)}
                 </p>
               </div>
 
               {/* 광고성 키워드 빈도 */}
-              <div className="bg-orange-50 p-6 rounded-lg border-2 border-orange-200">
+              <div
+                className={`bg-${getkeywordColor(
+                  analyzedData?.keyword_analysis?.percentage
+                )}-50 p-6 rounded-lg border-2 border-${getkeywordColor(
+                  analyzedData?.keyword_analysis?.percentage
+                )}-200`}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg font-semibold text-gray-800">
                     키워드 반복 점수
                   </h4>
-                  <span className="text-2xl font-bold text-orange-600">
-                    높음
+                  <span
+                    className={`text-2xl font-bold text-${getkeywordColor(
+                      analyzedData?.keyword_analysis?.percentage
+                    )}-600`}
+                  >
+                    {(
+                      (analyzedData?.keyword_analysis?.percentage ?? 0)
+                    ).toFixed(1)}
+                    %
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
                   <div
-                    className="bg-orange-500 h-3 rounded-full transition-all duration-1000"
-                    style={{ width: "75%" }}
+                    className={`bg-${getkeywordColor(
+                      analyzedData?.keyword_analysis?.percentage
+                    )}-500 h-3 rounded-full transition-all duration-1000`}
+                    style={{
+                      width: `${
+                        (analyzedData?.keyword_analysis?.percentage ?? 0)
+                      }%`,
+                    }}
                   ></div>
                 </div>
-                <p className="text-sm text-orange-700">
-                  키워드가 22회 발견되었습니다
+                <p
+                  className={`text-sm text-${getkeywordColor(
+                    analyzedData?.keyword_analysis?.percentage
+                  )}-700`}
+                >
+                  {getkeywordExpression(analyzedData?.keyword_analysis?.percentage)}
                 </p>
               </div>
 
-              {/* 객관성 수준 */}
+              {/* 광고확률 */}
               <div
                 className={`bg-${getRecommnedationColor(
-                  analyzedData?.athena_analysis?.credibility_score
+                  analyzedData?.ad_style_analysis?.ad_percentage
                 )}-50 p-6 rounded-lg border-2 border-${getRecommnedationColor(
-                  analyzedData?.athena_analysis?.credibility_score
+                  analyzedData?.ad_style_analysis?.ad_percentage
                 )}-200`}
               >
                 <div className="flex items-center justify-between mb-4">
@@ -298,33 +423,34 @@ export default function AnalysisResultPage() {
                   </h4>
                   <span
                     className={`text-2xl font-bold text-${getRecommnedationColor(
-                      analyzedData?.athena_analysis?.credibility_score
+                      analyzedData?.ad_style_analysis?.ad_percentage
                     )}-600`}
                   >
                     {getRecommnedationExpression(
-                      analyzedData?.athena_analysis?.credibility_score
+                      analyzedData?.ad_style_analysis?.ad_percentage
                     )}
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
                   <div
                     className={`bg-${getRecommnedationColor(
-                      analyzedData?.athena_analysis?.credibility_score
+                      analyzedData?.ad_style_analysis?.ad_percentage
                     )}-500 h-3 rounded-full transition-all duration-1000`}
                     style={{
                       width: `${
-                        (analyzedData?.athena_analysis?.credibility_score ??
-                          0) * 10
+                        analyzedData?.ad_style_analysis?.ad_percentage ?? 0
                       }%`,
                     }}
                   ></div>
                 </div>
                 <p
                   className={`text-sm text-${getRecommnedationColor(
-                    analyzedData?.athena_analysis?.credibility_score
+                    analyzedData?.ad_style_analysis?.ad_percentage
                   )}-700`}
                 >
-                  균형잡힌 시각이 부족하고 주관적인 표현이 많습니다
+                  {getRecommnedationword(
+                    analyzedData?.ad_style_analysis?.ad_percentage
+                  )}
                 </p>
               </div>
             </div>
