@@ -129,12 +129,12 @@ export default function Component() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 p-4">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* 헤더 */}
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-bold text-gray-900">
-            📝 블로그 종합 분석
+            📝 블로그 리서치
           </h1>
           <p className="text-lg text-gray-600">
             네이버 블로그의 광고성향과 패턴을 자동으로 분석합니다

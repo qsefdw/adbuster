@@ -339,7 +339,7 @@ export default function DetailedAnalysisPage() {
                 onClick={handleBloggerAnalysis}
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
-                블로거 분석
+                블로그 리서치
               </Button>
               <Button
                 variant="outline"
