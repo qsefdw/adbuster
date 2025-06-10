@@ -129,7 +129,7 @@ export default function Component() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-indigo-100 p-4">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* 헤더 */}
         <div className="text-center space-y-2">
@@ -138,7 +138,7 @@ export default function Component() {
           </h1>
           <p className="text-lg text-gray-600">
             네이버 블로그의 광고성향과 패턴을 자동으로 분석합니다
-          </p>
+          </p>         
         </div>
 
         {/* 입력 영역 */}
@@ -436,7 +436,7 @@ export default function Component() {
                               <span className="font-medium">URL:</span>
                               <a
                                 href={post.url}
-                                className="text-blue-600 hover:underline ml-1"
+                                className="text-green-600 hover:underline ml-1"
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >

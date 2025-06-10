@@ -58,6 +58,8 @@ export default function DetailedAnalysisPage() {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const { analyzedData, analyzedUrl } = useAnalyzer();
 
+  console.log(analyzedData);
+
   const getPositiveText = (positive_score: number) => {
     if (positive_score > 80)
       return "일반적인 리뷰(50-60%)보다 많이 높은 수준입니다.";
@@ -678,7 +680,7 @@ export default function DetailedAnalysisPage() {
                     <CollapsibleTrigger asChild>
                       <Button
                         variant="outline"
-                        className="w-full justify-between border-blue-200 text-blue-700 hover:bg-blue-50"
+                        className="w-full justify-between border-green-200 text-green-700 hover:bg-green-50"
                       >
                         <span className="flex items-center gap-2">
                           <FileText className="w-4 h-4" />
@@ -698,13 +700,13 @@ export default function DetailedAnalysisPage() {
                           <TableHeader>
                             <TableRow className="bg-gray-50">
                               <TableHead className="font-semibold text-gray-700">
-                                Keyword
+                                키워드
                               </TableHead>
                               <TableHead className="font-semibold text-gray-700">
-                                Repetition Count
+                                반복 횟수
                               </TableHead>
                               <TableHead className="font-semibold text-gray-700">
-                                Source Product Name
+                                참고한 제품이름
                               </TableHead>
                             </TableRow>
                           </TableHeader>
@@ -721,7 +723,7 @@ export default function DetailedAnalysisPage() {
                                   <TableCell>
                                     <Badge
                                       variant="secondary"
-                                      className="bg-blue-100 text-blue-800"
+                                      className="bg-green-100 text-green-800"
                                     >
                                       {row.count}
                                     </Badge>
@@ -970,8 +972,7 @@ export default function DetailedAnalysisPage() {
                     {/* 객관성 점수 카드 */}
                     <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm text-center">
                       <div className="text-5xl font-bold text-gray-800 mb-2">
-                        {analyzedData?.ad_style_analysis?.ad_score}/34 (
-                        {analyzedData?.ad_style_analysis?.ad_percentage}%)
+                        {analyzedData?.ad_style_analysis?.ad_percentage}%
                       </div>
                       <div className="text-sm text-gray-500 mb-4">
                         광고 확률
