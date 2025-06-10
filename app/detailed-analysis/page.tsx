@@ -51,13 +51,14 @@ import { useAnalyzer } from "@/contexts/AnalyzerContext";
 import { RadialProgress } from "@/components/radial-progress";
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import Link from "next/link";
 
 export default function DetailedAnalysisPage() {
   const router = useRouter();
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const { analyzedData, analyzedUrl } = useAnalyzer();
 
-  const getPositiveText = (positive_score) => {
+  const getPositiveText = (positive_score: number) => {
     if (positive_score > 80)
       return "일반적인 리뷰(50-60%)보다 많이 높은 수준입니다.";
 
@@ -67,22 +68,32 @@ export default function DetailedAnalysisPage() {
     return "일반적인 리뷰(50-60%)보다 적당한 수준입니다.";
   };
 
-  const getadtext = (average_ad_score) => {
-    if (isNaN(average_ad_score)) return "API를 불러오는 중 에러가 발생했습니다.";
+  const getNegativeText = (negative_score: number) => {
+    if (negative_score < 10) return "균형잡힌 시각이 부족해요";
+
+    if (negative_score < 30)
+      return "일반적인 리뷰(30-50%)보다 현저히 낮은 수준입니다.";
+
+    return "일반적인 리뷰(50-60%)보다 적당한 수준입니다.";
+  };
+
+  const getadtext = (average_ad_score: number) => {
+    if (isNaN(average_ad_score))
+      return "API를 불러오는 중 에러가 발생했습니다.";
     if (average_ad_score >= 80) return "명백한 광고성 콘텐츠입니다.";
     if (average_ad_score >= 50) return "광고성 의심됩니다.";
     if (average_ad_score >= 30) return "약간의 광고성이 의심됩니다.";
     return "독창적인 콘텐츠로 광고성이 없습니다.";
   };
 
-  const getadmainColor = (average_ad_score) => {
+  const getadmainColor = (average_ad_score: number) => {
     if (average_ad_score >= 80) return "red";
     if (average_ad_score >= 50) return "orange";
     if (average_ad_score >= 30) return "yellow";
     return "green";
   };
 
-  const getRecommnedationword = (ad_percentage) => {
+  const getRecommnedationword = (ad_percentage: number) => {
     if (ad_percentage == null) return "오류입니다.";
     if (ad_percentage >= 58.8) return "광고성 가능성 매우 높음.";
     if (ad_percentage >= 29.4) return "광고성 가능성 있음.";
@@ -90,7 +101,7 @@ export default function DetailedAnalysisPage() {
     return "광고성 게시글로 보이지 않음.";
   };
 
-  const getRecommnedationColor = (ad_percentage) => {
+  const getRecommnedationColor = (ad_percentage: number) => {
     if (ad_percentage == null) return "gray";
 
     if (ad_percentage >= 58.8) return "red";
@@ -100,6 +111,28 @@ export default function DetailedAnalysisPage() {
     if (ad_percentage >= 14.7) return "yellow";
 
     return "green";
+  };
+
+  const getSplitSentiment = (sentiments: any) => {
+    const positive = sentiments.find(
+      ({ sentiment }: { sentiment: string }) => sentiment === "긍정"
+    );
+
+    const negative = sentiments.find(
+      ({ sentiment }: { sentiment: string }) => sentiment === "부정"
+    );
+
+    const neutral = sentiments.filter(
+      ({ sentiment }: { sentiment: string }) => sentiment === "중립"
+    );
+
+    if (!positive && !negative) return [sentiments[0], sentiments[1]];
+
+    if (!positive) return [negative, neutral[0]];
+
+    if (!negative) return [positive, neutral[0]];
+
+    return [positive, negative];
   };
 
   // 감성 분석 데이터 (실제 백엔드 데이터 기반)
@@ -130,8 +163,8 @@ export default function DetailedAnalysisPage() {
       name: "중립",
       value: Number(
         (
-          (analyzedData?.sentiment_analysis?.overall_sentiment
-            ?.neutral_score ?? 0) * 100
+          (analyzedData?.sentiment_analysis?.overall_sentiment?.neutral_score ??
+            0) * 100
         ).toFixed(0)
       ),
       color: "#6b7280",
@@ -139,53 +172,77 @@ export default function DetailedAnalysisPage() {
     },
   ];
 
+  const getMainProductName = (
+    products: [{ product: string; score: number }]
+  ) => {
+    const mainProduct = products.reduce(
+      (
+        h: { product: string; score: number },
+        c: { product: string; score: number }
+      ) => {
+        const h_score = h?.score ?? 0;
+        const c_score = c?.score ?? 0;
+
+        return c_score > h_score ? c : h;
+      }
+    );
+
+    return mainProduct.product;
+  };
+
+  const getTopKeywordCount = (keywords: [{ count: number }]) => {
+    const highestKeyword = keywords.reduce(
+      (h: { count: number }, c: { count: number }) => {
+        const h_count = h?.count ?? 0;
+        const c_count = c?.count ?? 0;
+
+        return c_count > h_count ? c : h;
+      }
+    );
+
+    return highestKeyword.count;
+  };
+
+  const getDetailsTable = (
+    keywords: [
+      {
+        count: number;
+        keyword: string;
+        product: string;
+      }
+    ]
+  ) => {
+    const uniqueByKey = keywords.reduce((map, item) => {
+      if (!map.has(item.keyword)) {
+        map.set(item.keyword, item);
+      }
+      return map;
+    }, new Map());
+
+    return Array.from(uniqueByKey.values());
+  };
+
   // 키워드 분석 데이터 (실제 백엔드 데이터 기반)
   const keywordRepetitionData = {
-    mainProductName: "○○ 미백크림",
-    repetitionScore: ((analyzedData?.keyword_analysis?.percentage ?? 0)).toFixed(1),
-    topKeywordsAverage: 15.4,
-    detailsTable: [
-      { keyword: "추천", count: 22, sourceProduct: "○○ 미백크림" },
-      { keyword: "협찬", count: 18, sourceProduct: "○○ 미백크림" },
-      { keyword: "리뷰", count: 15, sourceProduct: "○○ 미백크림" },
-      { keyword: "할인", count: 12, sourceProduct: "△△ 세럼" },
-      { keyword: "특가", count: 10, sourceProduct: "△△ 세럼" },
-      { keyword: "만족", count: 8, sourceProduct: "○○ 미백크림" },
-      { keyword: "효과", count: 7, sourceProduct: "○○ 미백크림" },
-      { keyword: "사용", count: 6, sourceProduct: "일반 용어" },
-      { keyword: "제품", count: 5, sourceProduct: "일반 용어" },
-      { keyword: "피부", count: 4, sourceProduct: "일반 용어" },
-    ],
+    mainProductName: getMainProductName(
+      analyzedData?.keyword_analysis?.top_keywords
+    ),
+    repetitionScore: (analyzedData?.keyword_analysis?.percentage ?? 0).toFixed(
+      1
+    ),
+    topKeywordsAverage: getTopKeywordCount(
+      analyzedData?.keyword_analysis?.keyword_details
+    ),
+    detailsTable: getDetailsTable(
+      analyzedData?.keyword_analysis?.keyword_details
+    ),
   };
 
   // 문장별 분석 데이터 (이미지 기반으로 업데이트)
-  const sentenceAnalysisData = [
-    {
-      id: 3,
-      text: "그동안 속건조와 속당김이 해결되지 않아 화장품추천 받은 제품들을 중구난방 껴내놓고 바르느라 시간도 오래 걸리고 번거로웠는데요.",
-      duplicateRatio: "0.00 (0/4)",
-      similarSentences: "0개",
-      similarBlogRatio: "0.00 (0/4)",
-      adScore: "0.00/1.0",
-      similarBlogs: [], // 유사한 블로그 없음
-    },
-    {
-      id: 4,
-      text: "보통 계절의 변화에 따라 제품을 바꿔먹서 민감한 타입인 자극이 될 수 밖에 없었는데 유분기가 느껴지지 않는 촉촉함으로 4계절내내 데일리 건...",
-      duplicateRatio: "0.00 (0/6)",
-      similarSentences: "1개",
-      similarBlogRatio: "0.17 (1/6)",
-      adScore: "0.06/1.0",
-      similarBlogs: [
-        {
-          name: "추억속으로",
-          similarity: 0.9,
-          quote:
-            "촉촉하고 산뜻한타입이라서 흡수가 빠르며 끈적함이 없어 넘치들이 쓰기 정말 좋은데요. 남성화장품으로 쓰기 정말 좋은것은보남자들의 경우유분기과하게 많은제품을... 남자 기초제...",
-        },
-      ],
-    },
-  ];
+  const sentenceAnalysisData = analyzedData?.similarity_analysis?.results
+    .filter(({ ad_score }: { ad_score: number }) => ad_score > 0)
+    .sort((result1, result2) => result2.score - result1.score)
+    .slice(0, 3);
 
   // 레이더 차트 데이터 (백엔드 실제 데이터 기반, 가독성 제외)
   const radarData = [
@@ -236,20 +293,19 @@ export default function DetailedAnalysisPage() {
   ];
 
   // 2. objectivityMetrics 데이터 아래에 객관성 분석 그래프 데이터 추가
-  const objectivityBarData = [
-    { name: "후원", value: 3, color: "#e5e7eb", ratio: null },
-    { name: "구매유도", value: 2, color: "#e5e7eb", ratio: null },
-    { name: "관련링크", value: 2, color: "#e5e7eb", ratio: null },
-    { name: "감정분석", value: 1, color: "#e5e7eb", ratio: null },
-    { name: "노부정", value: 3, color: "#e5e7eb", ratio: null },
-    { name: "슬로건", value: 3, color: "#e5e7eb", ratio: null },
-    { name: "기관인용", value: 2, color: "#e5e7eb", ratio: null },
-    { name: "체험전후", value: 1, color: "#f59e0b", ratio: "1/3\n33%" },
-    { name: "제품반복", value: 3, color: "#e5e7eb", ratio: null },
-    { name: "해시태그", value: 3, color: "#ef4444", ratio: "2/3\n67%" },
-    { name: "광고이모지", value: 2, color: "#f59e0b", ratio: "3/6\n50%" },
-    { name: "명시광고", value: 2, color: "#e5e7eb", ratio: null },
-  ];
+  const pallete = ["#f59e0b", "#ef4444", "#f59e0b"];
+
+  const objectivityBarData = Object.entries(
+    analyzedData?.ad_style_analysis?.ad_details
+  ).map(([key, value], idx) => {
+    console.log(pallete[idx]);
+    return {
+      name: key,
+      value,
+      color: `${pallete[idx % 2]}`,
+      ratio: null,
+    };
+  });
 
   const handleBack = () => {
     router.back();
@@ -259,9 +315,9 @@ export default function DetailedAnalysisPage() {
     router.push("/");
   };
 
-  const handleBloggerAnalysis= () => {
+  const handleBloggerAnalysis = () => {
     router.push("/blogger-analysis");
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
@@ -457,8 +513,8 @@ export default function DetailedAnalysisPage() {
                             {Number(
                               (
                                 (analyzedData?.sentiment_analysis
-                                    ?.overall_sentiment?.positive_score ??
-                                  0) * 100
+                                  ?.overall_sentiment?.positive_score ?? 0) *
+                                100
                               ).toFixed(0)
                             )}
                             %로 가장 많아요
@@ -468,8 +524,8 @@ export default function DetailedAnalysisPage() {
                               Number(
                                 (
                                   (analyzedData?.sentiment_analysis
-                                    ?.overall_sentiment?.positive_score ??
-                                    0) * 100
+                                    ?.overall_sentiment?.positive_score ?? 0) *
+                                  100
                                 ).toFixed(0)
                               )
                             )}
@@ -477,11 +533,27 @@ export default function DetailedAnalysisPage() {
                         </div>
                         <div className="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-500">
                           <h5 className="font-semibold text-yellow-800 mb-2">
-                            균형잡힌 시각이 부족해요
+                            {getNegativeText(
+                              Number(
+                                (
+                                  (analyzedData?.sentiment_analysis
+                                    ?.overall_sentiment?.negative_score ?? 0) *
+                                  100
+                                ).toFixed(0)
+                              )
+                            )}
                           </h5>
                           <p className="text-sm text-yellow-700">
-                            부정적 의견이 10%미만으로 매우 낮아 객관적인 평가가
-                            부족할 수 있어요.
+                            부정적 의견이{" "}
+                            {Number(
+                              (
+                                (analyzedData?.sentiment_analysis
+                                  ?.overall_sentiment?.negative_score ?? 0) *
+                                100
+                              ).toFixed(0)
+                            )}
+                            %미만으로 매우 낮아 객관적인 평가가 부족할 수
+                            있어요.
                           </p>
                         </div>
                       </div>
@@ -492,7 +564,45 @@ export default function DetailedAnalysisPage() {
                         💬 대표적인 문장 예시
                       </h5>
                       <div className="space-y-2 text-sm">
-                        <div className="bg-white p-3 rounded border-l-4 border-green-500">
+                        {getSplitSentiment(
+                          analyzedData?.sentiment_analysis?.sentence_sentiments
+                            ?.hybrid
+                        ).map((sentiments) => (
+                          <div
+                            key={sentiments.sentence_index}
+                            className={`bg-white p-3 rounded border-l-4 ${
+                              sentiments.sentiment === "긍정"
+                                ? "border-green-500"
+                                : sentiments.sentiment === "부정"
+                                ? "border-red-500"
+                                : "border-gray-500"
+                            }`}
+                          >
+                            <span
+                              className={`text-${
+                                sentiments.sentiment === "긍정"
+                                  ? "green"
+                                  : sentiments.sentiment === "부정"
+                                  ? "red"
+                                  : "gray"
+                              }-700`}
+                            >
+                              "{sentiments.sentence}"
+                            </span>
+                            <Badge
+                              className={`ml-2 bg-${
+                                sentiments.sentiment === "긍정"
+                                  ? "green-100 text-green-800"
+                                  : sentiments.sentiment === "부정"
+                                  ? "red-100 text-red-800"
+                                  : "gray-100 text-gray-800"
+                              }`}
+                            >
+                              {sentiments.sentiment}
+                            </Badge>
+                          </div>
+                        ))}
+                        {/* <div className="bg-white p-3 rounded border-l-4 border-green-500">
                           <span className="text-green-700">
                             "정말 만족스러운 제품이에요! 강력 추천합니다"
                           </span>
@@ -507,7 +617,7 @@ export default function DetailedAnalysisPage() {
                           <Badge className="ml-2 bg-gray-100 text-gray-800">
                             중립
                           </Badge>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>
@@ -554,7 +664,7 @@ export default function DetailedAnalysisPage() {
                           최다 반복 횟수
                         </h4>
                         <p className="text-lg font-semibold text-gray-800">
-                          {keywordRepetitionData.topKeywordsAverage} mentions
+                          {keywordRepetitionData.topKeywordsAverage} 회
                         </p>
                       </div>
                     </div>
@@ -617,7 +727,7 @@ export default function DetailedAnalysisPage() {
                                     </Badge>
                                   </TableCell>
                                   <TableCell className="text-gray-600">
-                                    {row.sourceProduct}
+                                    {row.product}
                                   </TableCell>
                                 </TableRow>
                               )
@@ -696,8 +806,10 @@ export default function DetailedAnalysisPage() {
                       <div className="text-center">
                         <div className="text-4xl font-bold text-green-600 mb-2">
                           {(
-                      (analyzedData?.similarity_analysis?.average_ad_score ?? 0)
-                    ).toFixed(1)}/10
+                            analyzedData?.similarity_analysis
+                              ?.average_ad_score ?? 0
+                          ).toFixed(1)}
+                          /10
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
                           <div
@@ -712,15 +824,31 @@ export default function DetailedAnalysisPage() {
                     </div>
 
                     {/* 판정 결과 카드 */}
-                    <div className={`bg-${getadmainColor(analyzedData?.similarity_analysis?.average_ad_score)}-50 p-6 rounded-lg border border-${getadmainColor(analyzedData?.similarity_analysis?.average_ad_score)}-200`} >
+                    <div
+                      className={`bg-${getadmainColor(
+                        analyzedData?.similarity_analysis?.average_ad_score
+                      )}-50 p-6 rounded-lg border border-${getadmainColor(
+                        analyzedData?.similarity_analysis?.average_ad_score
+                      )}-200`}
+                    >
                       <div className="flex items-center gap-2 mb-3">
-                        <AlertTriangle className={`w-5 h-5 text-${getadmainColor(analyzedData?.similarity_analysis?.average_ad_score)}-600`} />
-                        <h4 className={`text-lg font-semibold text-${getadmainColor(analyzedData?.similarity_analysis?.average_ad_score)}-800`}>
+                        <AlertTriangle
+                          className={`w-5 h-5 text-${getadmainColor(
+                            analyzedData?.similarity_analysis?.average_ad_score
+                          )}-600`}
+                        />
+                        <h4
+                          className={`text-lg font-semibold text-${getadmainColor(
+                            analyzedData?.similarity_analysis?.average_ad_score
+                          )}-800`}
+                        >
                           판정
                         </h4>
                       </div>
                       <p className="text-green-700 font-medium">
-                        {getadtext(analyzedData?.similarity_analysis?.average_ad_score)}
+                        {getadtext(
+                          analyzedData?.similarity_analysis?.average_ad_score
+                        )}
                       </p>
                     </div>
                   </div>
@@ -733,17 +861,15 @@ export default function DetailedAnalysisPage() {
                       </h4>
 
                       <div className="space-y-8">
-                        {sentenceAnalysisData.map((sentence) => (
+                        {sentenceAnalysisData.map((sentence, idx) => (
                           <div
-                            key={sentence.id}
+                            key={idx}
                             className="border-b border-gray-100 pb-6 last:border-b-0"
                           >
                             <div className="mb-4">
-                              <span className="text-sm font-medium text-gray-600">
-                                {sentence.id}.
-                              </span>
+                              <span className="text-sm font-medium text-gray-600"></span>
                               <p className="text-sm text-gray-800 mt-2 leading-relaxed">
-                                "{sentence.text}"
+                                "{sentence.original_sentence}"
                               </p>
                             </div>
 
@@ -753,10 +879,10 @@ export default function DetailedAnalysisPage() {
                                   동일 문장 비율:
                                 </span>
                                 <span className="font-medium">
-                                  {sentence.duplicateRatio}
+                                  {sentence.ad_score.toFixed(2)}
                                 </span>
                               </div>
-                              <div className="flex items-center">
+                              {/* <div className="flex items-center">
                                 <span className="text-gray-500 w-20">
                                   높은 유사도 문장 수:
                                 </span>
@@ -779,33 +905,43 @@ export default function DetailedAnalysisPage() {
                                 <span className="font-medium">
                                   {sentence.adScore}
                                 </span>
-                              </div>
+                              </div> */}
                             </div>
-
                             {/* 유사한 블로그가 있는 경우에만 표시 */}
-                            {sentence.similarBlogs &&
-                              sentence.similarBlogs.length > 0 && (
+                            {sentence.similar_matches &&
+                              sentence.similar_matches.length > 0 && (
                                 <div className="mt-4">
                                   <h5 className="text-sm font-semibold text-gray-800 mb-3">
                                     유사한 블로그 발견:
                                   </h5>
-                                  {sentence.similarBlogs.map((blog, index) => (
-                                    <div key={index} className="space-y-2">
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-sm font-medium">
-                                          {index + 1}. {blog.name}
-                                        </span>
-                                        <span className="text-sm text-gray-600">
-                                          (유사도: {blog.similarity})
-                                        </span>
+                                  {sentence.similar_matches
+                                    .slice(0, 3)
+                                    .map((blog, index) => (
+                                      <div key={index} className="space-y-2">
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-sm font-medium">
+                                            {index + 1}.
+                                            <Link
+                                              href={blog.url}
+                                              target="_blank"
+                                            >
+                                              {blog.url.length > 45
+                                                ? blog.url.slice(0, 45) + "..."
+                                                : blog.url}
+                                            </Link>
+                                          </span>
+                                          <span className="text-sm text-gray-600">
+                                            (유사도:{" "}
+                                            {blog.similarity.toFixed(2)})
+                                          </span>
+                                        </div>
+                                        <div className="bg-gray-50 p-3 rounded-lg border-l-4 border-green-500">
+                                          <p className="text-xs text-gray-700 leading-relaxed italic">
+                                            "{blog.snippet}"
+                                          </p>
+                                        </div>
                                       </div>
-                                      <div className="bg-gray-50 p-3 rounded-lg border-l-4 border-green-500">
-                                        <p className="text-xs text-gray-700 leading-relaxed italic">
-                                          "{blog.quote}"
-                                        </p>
-                                      </div>
-                                    </div>
-                                  ))}
+                                    ))}
                                 </div>
                               )}
                           </div>
@@ -834,13 +970,22 @@ export default function DetailedAnalysisPage() {
                     {/* 객관성 점수 카드 */}
                     <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm text-center">
                       <div className="text-5xl font-bold text-gray-800 mb-2">
-                        {(analyzedData?.ad_style_analysis?.ad_score)}/34 ({(analyzedData?.ad_style_analysis?.ad_percentage)}%)
+                        {analyzedData?.ad_style_analysis?.ad_score}/34 (
+                        {analyzedData?.ad_style_analysis?.ad_percentage}%)
                       </div>
                       <div className="text-sm text-gray-500 mb-4">
                         광고 확률
                       </div>
-                      <div className={`inline-block bg-${getRecommnedationColor(analyzedData?.ad_style_analysis?.ad_percentage)}-100 text-${getRecommnedationColor(analyzedData?.ad_style_analysis?.ad_percentage)}-800 px-3 py-1 rounded-full text-sm font-medium`}>
-                        {getRecommnedationword(analyzedData?.ad_style_analysis?.ad_percentage)}
+                      <div
+                        className={`inline-block bg-${getRecommnedationColor(
+                          analyzedData?.ad_style_analysis?.ad_percentage
+                        )}-100 text-${getRecommnedationColor(
+                          analyzedData?.ad_style_analysis?.ad_percentage
+                        )}-800 px-3 py-1 rounded-full text-sm font-medium`}
+                      >
+                        {getRecommnedationword(
+                          analyzedData?.ad_style_analysis?.ad_percentage
+                        )}
                       </div>
                     </div>
 
