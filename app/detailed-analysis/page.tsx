@@ -101,6 +101,29 @@ export default function DetailedAnalysisPage() {
     return "광고성 게시글로 보이지 않음.";
   };
 
+  const getfinalresult = (final_score) => {
+    if (final_score == null) return <span>오류입니다.</span>;
+    if (final_score >= 80)
+      return <span>80점 이상인 <strong>매우 신뢰</strong>할 수 있는 블로그입니다.</span>;
+    if (final_score >= 60)
+      return (
+        <span>
+          일반적인 블로그로 <strong>신뢰</strong>할 수 있는 블로그입니다.
+        </span>
+      );
+    if (final_score >= 40)
+      return <span>광고성 내용이 포함되었을 수 있으니 <strong>주의</strong>가 필요합니다.</span>;
+    return <span>광고글일 가능성이 <strong>높습니다</strong>.</span>;
+  };
+
+  const getfinalcolor = (final_score) => {
+    if (final_score == null) return "gray.";
+    if (final_score >= 80) return "green";
+    if (final_score >= 60) return "yellow";
+    if (final_score >= 40) return "orange";
+    return "red";
+  };
+
   const getRecommnedationColor = (ad_percentage: number) => {
     if (ad_percentage == null) return "gray";
 
@@ -277,22 +300,44 @@ export default function DetailedAnalysisPage() {
   const radarData = [
     {
       subject: "감정분석",
-      score: 78,
+      score: (
+        (analyzedData?.final_adbuster_score?.sentiment_combined /
+          Number(analyzedData?.final_adbuster_score?.final_score.toFixed(1))) *
+        100
+      ).toFixed(1),
       description: "광고 관련 키워드와 표현의 집중도",
     },
     {
-      subject: "광고성",
-      score: 45,
+      subject: "광고성분석",
+      score: (
+        ((analyzedData?.final_adbuster_score?.aurora_reversed * 0.3).toFixed(
+          1
+        ) /
+          Number(analyzedData?.final_adbuster_score?.final_score.toFixed(1))) *
+        100
+      ).toFixed(1),
       description: "정보의 균형성과 객관적 서술 정도",
     },
     {
       subject: "유사도분석",
-      score: 72,
+      score: (
+        ((
+          analyzedData?.final_adbuster_score?.similarity_normalized * 0.2
+        ).toFixed(1) /
+          Number(analyzedData?.final_adbuster_score?.final_score.toFixed(1))) *
+        100
+      ).toFixed(1),
       description: "특정 키워드의 반복 사용 빈도",
     },
     {
       subject: "키워드반복",
-      score: 35,
+      score: (
+        ((analyzedData?.final_adbuster_score?.tfidf_reversed * 0.15).toFixed(
+          1
+        ) /
+          Number(analyzedData?.final_adbuster_score?.final_score.toFixed(1))) *
+        100
+      ).toFixed(2),
       description: "광고 표시 및 정보 공개의 투명성",
     },
   ];
@@ -939,7 +984,7 @@ export default function DetailedAnalysisPage() {
                                   유사 블로그 비율:
                                 </span>
                                 <span className="font-medium">
-                                  {sentence?.similar_blogs_ratio}
+                                  {sentence?.similar_blogs_ratio?.toFixed(2)}
                                 </span>
                               </div>
                               <div className="flex items-center">
@@ -1065,10 +1110,13 @@ export default function DetailedAnalysisPage() {
                       </h5>
                       {Object.entries(
                         analyzedData?.ad_style_analysis?.ad_details_by_criteria
-                      ).map(([key, value], idx) => {
+                      ).map(([k, v], idx) => {
                         return (
-                          <Badge className="bg-green-100 text-green-800 font-normal">
-                            {key}: {value}
+                          <Badge
+                            key={k}
+                            className="bg-green-100 text-green-800 font-normal"
+                          >
+                            {k}: {v}
                           </Badge>
                         );
                       })}
@@ -1207,8 +1255,47 @@ export default function DetailedAnalysisPage() {
                         </RadarChart>
                       </ResponsiveContainer>
                     </div>
-                    <div className="mt-4 text-center text-sm text-gray-600">
+                    <div className="mt-4 mb-4 text-center text-sm text-gray-600">
                       점수가 높을수록 해당 특성이 강함을 의미합니다
+                    </div>
+
+                    <div
+                      className={`bg-${getfinalcolor(
+                        analyzedData?.final_adbuster_score?.final_score
+                      )}-50 p-4 rounded-lg border border-${getfinalcolor(
+                        analyzedData?.final_adbuster_score?.final_score
+                      )}-200`}
+                    >
+                      <h5
+                        className={`font-semibold text-${getfinalcolor(
+                          analyzedData?.final_adbuster_score?.final_score
+                        )}-800 mb-2`}
+                      >
+                        ⚠️ 종합 평가
+                      </h5>
+                      <p
+                        className={`text-sm text-${getfinalcolor(
+                          analyzedData?.final_adbuster_score?.final_score
+                        )}-700 leading-relaxed`}
+                      >
+                        - 80점 이상: 매우 신뢰할 수 있는 컨텐츠
+                        <br />
+                        - 60-79점: 일반적인 블로그 (신뢰 가능) <br /> - 40-59점:
+                        광고성 의심 (주의 필요) <br /> - 40점 미만: 광고성 높음
+                        (경고) <br />
+                      </p>
+                      <p
+                        className={`text-sm text-${getfinalcolor(
+                          analyzedData?.final_adbuster_score?.final_score
+                        )}-700 p-3 leading-relaxed text-center`}
+                      >
+                        {`총 합이 ${analyzedData?.final_adbuster_score?.final_score.toFixed(
+                          1
+                        )}점으로`}
+                        {getfinalresult(
+                          analyzedData?.final_adbuster_score?.final_score
+                        )}
+                      </p>
                     </div>
                   </div>
 
@@ -1238,18 +1325,6 @@ export default function DetailedAnalysisPage() {
                           </div>
                         ))}
                       </div>
-                    </div>
-
-                    <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-                      <h5 className="font-semibold text-red-800 mb-2">
-                        ⚠️ 종합 평가
-                      </h5>
-                      <p className="text-sm text-red-700 leading-relaxed">
-                        광고성 지수와 키워드 집중도가 높고, 내용 객관성과 정보
-                        투명성이 낮아
-                        <strong> 광고성 콘텐츠로 판단</strong>됩니다. 특히 협찬
-                        관련 키워드와 과도한 긍정적 표현이 주요 판단 근거입니다.
-                      </p>
                     </div>
                   </div>
                 </div>

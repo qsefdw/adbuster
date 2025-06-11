@@ -360,7 +360,7 @@ export default function AnalysisResultPage() {
                     style={{
                       width: `${
                         analyzedData?.similarity_analysis?.overall_summary
-                          ?.overall_ad_score ?? 0
+                          ?.overall_ad_score * 10 ?? 0
                       }%`,
                     }}
                   ></div>
