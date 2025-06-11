@@ -149,13 +149,13 @@ export default function AnalysisResultPage() {
   };
 
   const getadword = (average_ad_score) => {
-    if (isNaN(average_ad_score)) return "API를 불러오는 중 에러가 발생했습니다.";
+    if (isNaN(average_ad_score))
+      return "API를 불러오는 중 에러가 발생했습니다.";
     if (average_ad_score >= 80) return "명백한 광고성 콘텐츠입니다.";
     if (average_ad_score >= 50) return "광고성 의심됩니다.";
     if (average_ad_score >= 30) return "약간의 광고성이 의심됩니다.";
     return "독창적인 콘텐츠로 광고성이 없습니다.";
   };
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
@@ -216,22 +216,24 @@ export default function AnalysisResultPage() {
             <div className="mb-8">
               <div
                 className={`inline-flex items-center gap-4 px-10 py-6 bg-${getGradeColor(
-                  analyzedData?.final_score?.final_score ?? 0
+                  analyzedData?.final_adbuster_score?.final_score ?? 0
                 )}-100 border-3 border-${getGradeColor(
-                  analyzedData?.final_score?.final_score ?? 0
+                  analyzedData?.final_adbuster_score?.final_score ?? 0
                 )}-300 rounded-2xl shadow-lg`}
               >
                 <div className="text-6xl">
-                  {getGradeIcon(analyzedData?.final_score?.final_score ?? 0)}
+                  {getGradeIcon(
+                    analyzedData?.final_adbuster_score?.final_score ?? 0
+                  )}
                 </div>
                 <div className="text-left">
                   <div
                     className={`text-3xl font-bold text-${getGradeColor(
-                      analyzedData?.final_score?.final_score ?? 0
+                      analyzedData?.final_adbuster_score?.final_score ?? 0
                     )}-800 mb-1`}
                   >
                     {getGradeExpression(
-                      analyzedData?.final_score?.final_score ?? 0
+                      analyzedData?.final_adbuster_score?.final_score ?? 0
                     )}
                   </div>
                   <div className="text-lg text-yellow-700">
@@ -248,7 +250,7 @@ export default function AnalysisResultPage() {
               </h3>
               <CircularProgress
                 percentage={(
-                  analyzedData?.final_score?.final_score ?? 0
+                  analyzedData?.final_adbuster_score?.final_score ?? 0
                 ).toFixed(0)}
               />
             </div>
@@ -268,28 +270,28 @@ export default function AnalysisResultPage() {
               {/* 긍정적 표현 비율 */}
               <div
                 className={`bg-${getPositiveColor(
-                  analyzedData?.sentiment_analysis?.overall_sentiment
+                  analyzedData?.sentiment_analysis?.overall_sentiment_azure
                     ?.positive_score * 100
                 )}-50 p-6 rounded-lg border-2 border-${getPositiveColor(
-                  analyzedData?.sentiment_analysis?.overall_sentiment
+                  analyzedData?.sentiment_analysis?.overall_sentiment_azure
                     ?.positive_score * 100
                 )}-200`}
               >
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg font-semibold text-gray-800">
                     {getPositiveExpression(
-                      analyzedData?.sentiment_analysis?.overall_sentiment
+                      analyzedData?.sentiment_analysis?.overall_sentiment_azure
                         ?.positive_score * 100
                     )}
                   </h4>
                   <span
                     className={`text-2xl font-bold text-${getPositiveColor(
-                      analyzedData?.sentiment_analysis?.overall_sentiment
+                      analyzedData?.sentiment_analysis?.overall_sentiment_azure
                         ?.positive_score * 100
                     )}-600`}
                   >
                     {(
-                      (analyzedData?.sentiment_analysis?.overall_sentiment
+                      (analyzedData?.sentiment_analysis?.overall_sentiment_azure
                         ?.positive_score ?? 0) * 100
                     ).toFixed(0)}
                     %
@@ -298,36 +300,38 @@ export default function AnalysisResultPage() {
                 <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
                   <div
                     className={`bg-${getPositiveColor(
-                      analyzedData?.sentiment_analysis?.overall_sentiment
+                      analyzedData?.sentiment_analysis?.overall_sentiment_azure
                         ?.positive_score * 100
                     )}-500 h-3 rounded-full transition-all duration-1000`}
                     style={{
                       width: `${
-                        (analyzedData?.sentiment_analysis?.overall_sentiment
-                          ?.positive_score ?? 0) * 100
+                        (analyzedData?.sentiment_analysis
+                          ?.overall_sentiment_azure?.positive_score ?? 0) * 100
                       }%`,
                     }}
                   ></div>
                 </div>
                 <p
                   className={`text-sm text-${getPositiveColor(
-                    analyzedData?.sentiment_analysis?.overall_sentiment
+                    analyzedData?.sentiment_analysis?.overall_sentiment_azure
                       ?.positive_score * 100
                   )}-700`}
                 >
                   {getPositiveword(
-                      analyzedData?.sentiment_analysis?.overall_sentiment
-                        ?.positive_score * 100
-                    )}
+                    analyzedData?.sentiment_analysis?.overall_sentiment_azure
+                      ?.positive_score * 100
+                  )}
                 </p>
               </div>
 
               {/* 광고 점수 */}
               <div
                 className={`bg-${getadColor(
-                  analyzedData?.similarity_analysis?.average_ad_score
+                  analyzedData?.similarity_analysis?.overall_summary
+                    ?.overall_ad_score
                 )}-50 p-6 rounded-lg border-2 border-${getadColor(
-                  analyzedData?.similarity_analysis?.average_ad_score
+                  analyzedData?.similarity_analysis?.overall_summary
+                    ?.overall_ad_score
                 )}-200`}
               >
                 <div className="flex items-center justify-between mb-4">
@@ -336,32 +340,41 @@ export default function AnalysisResultPage() {
                   </h4>
                   <span
                     className={`text-2xl font-bold text-${getadColor(
-                      analyzedData?.similarity_analysis?.average_ad_score
+                      analyzedData?.similarity_analysis?.overall_summary
+                        ?.overall_ad_score
                     )}-600`}
                   >
                     {(
-                      (analyzedData?.similarity_analysis?.average_ad_score ?? 0)
-                    ).toFixed(1)}/10
+                      analyzedData?.similarity_analysis?.overall_summary
+                        ?.overall_ad_score ?? 0
+                    ).toFixed(1)}
+                    /10
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
                   <div
                     className={`bg-${getadColor(
-                      analyzedData?.similarity_analysis?.average_ad_score
+                      analyzedData?.similarity_analysis?.overall_summary
+                        ?.overall_ad_score
                     )}-500 h-3 rounded-full transition-all duration-1000`}
                     style={{
                       width: `${
-                        analyzedData?.similarity_analysis?.average_ad_score ?? 0
+                        analyzedData?.similarity_analysis?.overall_summary
+                          ?.overall_ad_score ?? 0
                       }%`,
                     }}
                   ></div>
                 </div>
                 <p
                   className={`text-sm text-${getadColor(
-                    analyzedData?.similarity_analysis?.average_ad_score
+                    analyzedData?.similarity_analysis?.overall_summary
+                      ?.overall_ad_score
                   )}-700`}
                 >
-                  {getadword(analyzedData?.similarity_analysis?.average_ad_score)}
+                  {getadword(
+                    analyzedData?.similarity_analysis?.overall_summary
+                      ?.overall_ad_score
+                  )}
                 </p>
               </div>
 
@@ -382,9 +395,9 @@ export default function AnalysisResultPage() {
                       analyzedData?.keyword_analysis?.percentage
                     )}-600`}
                   >
-                    {(
-                      (analyzedData?.keyword_analysis?.percentage ?? 0)
-                    ).toFixed(1)}
+                    {(analyzedData?.keyword_analysis?.percentage ?? 0).toFixed(
+                      1
+                    )}
                     %
                   </span>
                 </div>
@@ -395,7 +408,7 @@ export default function AnalysisResultPage() {
                     )}-500 h-3 rounded-full transition-all duration-1000`}
                     style={{
                       width: `${
-                        (analyzedData?.keyword_analysis?.percentage ?? 0)
+                        analyzedData?.keyword_analysis?.percentage ?? 0
                       }%`,
                     }}
                   ></div>
@@ -405,7 +418,9 @@ export default function AnalysisResultPage() {
                     analyzedData?.keyword_analysis?.percentage
                   )}-700`}
                 >
-                  {getkeywordExpression(analyzedData?.keyword_analysis?.percentage)}
+                  {getkeywordExpression(
+                    analyzedData?.keyword_analysis?.percentage
+                  )}
                 </p>
               </div>
 

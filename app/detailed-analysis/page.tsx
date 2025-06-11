@@ -71,7 +71,8 @@ export default function DetailedAnalysisPage() {
   };
 
   const getNegativeText = (negative_score: number) => {
-    if (negative_score < 25) return "부정적 의견이 25%미만으로 매우 낮아 객관적인 평가가 부족할 수 있어요.";
+    if (negative_score < 25)
+      return "부정적 의견이 25%미만으로 매우 낮아 객관적인 평가가 부족할 수 있어요.";
 
     return "부정적 의견이 적당하게 있어요.";
   };
@@ -140,7 +141,7 @@ export default function DetailedAnalysisPage() {
       name: "긍정",
       value: Number(
         (
-          (analyzedData?.sentiment_analysis?.overall_sentiment
+          (analyzedData?.sentiment_analysis?.overall_sentiment_azure
             ?.positive_score ?? 0) * 100
         ).toFixed(0)
       ),
@@ -151,7 +152,7 @@ export default function DetailedAnalysisPage() {
       name: "부정",
       value: Number(
         (
-          (analyzedData?.sentiment_analysis?.overall_sentiment
+          (analyzedData?.sentiment_analysis?.overall_sentiment_azure
             ?.negative_score ?? 0) * 100
         ).toFixed(0)
       ),
@@ -162,8 +163,8 @@ export default function DetailedAnalysisPage() {
       name: "중립",
       value: Number(
         (
-          (analyzedData?.sentiment_analysis?.overall_sentiment?.neutral_score ??
-            0) * 100
+          (analyzedData?.sentiment_analysis?.overall_sentiment_azure
+            ?.neutral_score ?? 0) * 100
         ).toFixed(0)
       ),
       color: "#6b7280",
@@ -238,10 +239,14 @@ export default function DetailedAnalysisPage() {
   };
 
   // 문장별 분석 데이터 (이미지 기반으로 업데이트)
-  const sentenceAnalysisData = analyzedData?.similarity_analysis?.results
-    .filter(({ ad_score }: { ad_score: number }) => ad_score > 0)
-    .sort((result1, result2) => result2.score - result1.score)
-    .slice(0, 3);
+  const sentenceAnalysisData =
+    analyzedData?.similarity_analysis?.key_sentences_analysis
+      .filter(
+        ({ sentence_ad_score }: { sentence_ad_score: number }) =>
+          sentence_ad_score > 0
+      )
+      .sort((result1, result2) => result2.score - result1.score)
+      .slice(0, 3);
 
   // 레이더 차트 데이터 (백엔드 실제 데이터 기반, 가독성 제외)
   const radarData = [
@@ -295,7 +300,7 @@ export default function DetailedAnalysisPage() {
   const pallete = ["#f59e0b", "#ef4444", "#f59e0b"];
 
   const objectivityBarData = Object.entries(
-    analyzedData?.ad_style_analysis?.ad_details
+    analyzedData?.ad_style_analysis?.ad_details_by_criteria
   ).map(([key, value], idx) => {
     console.log(pallete[idx]);
     return {
@@ -512,8 +517,8 @@ export default function DetailedAnalysisPage() {
                             {Number(
                               (
                                 (analyzedData?.sentiment_analysis
-                                  ?.overall_sentiment?.positive_score ?? 0) *
-                                100
+                                  ?.overall_sentiment_azure?.positive_score ??
+                                  0) * 100
                               ).toFixed(0)
                             )}
                             %로 가장 많아요
@@ -536,8 +541,8 @@ export default function DetailedAnalysisPage() {
                               Number(
                                 (
                                   (analyzedData?.sentiment_analysis
-                                    ?.overall_sentiment?.negative_score ?? 0) *
-                                  100
+                                    ?.overall_sentiment_azure?.negative_score ??
+                                    0) * 100
                                 ).toFixed(0)
                               )
                             )}
@@ -793,15 +798,22 @@ export default function DetailedAnalysisPage() {
                       <div className="text-center">
                         <div className="text-4xl font-bold text-green-600 mb-2">
                           {(
-                            analyzedData?.similarity_analysis
-                              ?.average_ad_score ?? 0
+                            analyzedData?.similarity_analysis?.overall_summary
+                              ?.overall_ad_score ?? 0
                           ).toFixed(1)}
                           /10
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
                           <div
                             className="bg-green-600 h-3 rounded-full"
-                            style={{ width: "4%" }}
+                            style={{
+                              width: `${
+                                (
+                                  analyzedData?.similarity_analysis
+                                    ?.overall_summary?.overall_ad_score ?? 0
+                                ).toFixed(1) * 10
+                              }%`,
+                            }}
                           ></div>
                         </div>
                         <div className="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
@@ -813,20 +825,24 @@ export default function DetailedAnalysisPage() {
                     {/* 판정 결과 카드 */}
                     <div
                       className={`bg-${getadmainColor(
-                        analyzedData?.similarity_analysis?.average_ad_score
+                        analyzedData?.similarity_analysis?.overall_summary
+                          ?.overall_ad_score
                       )}-50 p-6 rounded-lg border border-${getadmainColor(
-                        analyzedData?.similarity_analysis?.average_ad_score
+                        analyzedData?.similarity_analysis?.overall_summary
+                          ?.overall_ad_score
                       )}-200`}
                     >
                       <div className="flex items-center gap-2 mb-3">
                         <AlertTriangle
                           className={`w-5 h-5 text-${getadmainColor(
-                            analyzedData?.similarity_analysis?.average_ad_score
+                            analyzedData?.similarity_analysis?.overall_summary
+                              ?.overall_ad_score
                           )}-600`}
                         />
                         <h4
                           className={`text-lg font-semibold text-${getadmainColor(
-                            analyzedData?.similarity_analysis?.average_ad_score
+                            analyzedData?.similarity_analysis?.overall_summary
+                              ?.overall_ad_score
                           )}-800`}
                         >
                           판정
@@ -834,7 +850,8 @@ export default function DetailedAnalysisPage() {
                       </div>
                       <p className="text-green-700 font-medium">
                         {getadtext(
-                          analyzedData?.similarity_analysis?.average_ad_score
+                          analyzedData?.similarity_analysis?.overall_summary
+                            ?.overall_ad_score
                         )}
                       </p>
                     </div>
@@ -1092,7 +1109,7 @@ export default function DetailedAnalysisPage() {
                       </h4>
                       <div className="bg-yellow-50 p-4 rounded-lg">
                         <p className="text-sm text-gray-700 leading-relaxed">
-                          {analyzedData?.ad_style_analysis?.summary}
+                          {analyzedData?.ad_style_analysis?.blog_summary_gpt}
                         </p>
                       </div>
                     </div>
