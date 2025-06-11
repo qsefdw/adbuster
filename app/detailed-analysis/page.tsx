@@ -764,7 +764,10 @@ export default function DetailedAnalysisPage() {
                             블로그 제목:
                           </span>
                           <span className="text-gray-800">
-                            {analyzedData?.similarity_analysis?.analysis_metadata?.blog_title}
+                            {
+                              analyzedData?.similarity_analysis
+                                ?.analysis_metadata?.blog_title
+                            }
                           </span>
                         </div>
 
@@ -776,7 +779,10 @@ export default function DetailedAnalysisPage() {
                             href={analyzedUrl}
                             className="text-green-700 hover:underline break-all"
                           >
-                            {analyzedData?.similarity_analysis?.analysis_metadata?.url}
+                            {
+                              analyzedData?.similarity_analysis
+                                ?.analysis_metadata?.url
+                            }
                           </a>
                         </div>
 
@@ -784,7 +790,12 @@ export default function DetailedAnalysisPage() {
                           <span className="text-gray-600 min-w-0 flex-shrink-0">
                             콘텐츠 길이:
                           </span>
-                          <span className="text-gray-800">{analyzedData?.similarity_analysis?.analysis_metadata?.content_length}</span>
+                          <span className="text-gray-800">
+                            {
+                              analyzedData?.similarity_analysis
+                                ?.analysis_metadata?.content_length
+                            }
+                          </span>
                         </div>
 
                         <div className="flex items-start gap-2">
@@ -792,7 +803,10 @@ export default function DetailedAnalysisPage() {
                             분석 시간:
                           </span>
                           <span className="text-gray-800">
-                            {analyzedData?.similarity_analysis?.analysis_metadata?.analysis_timestamp}
+                            {
+                              analyzedData?.similarity_analysis
+                                ?.analysis_metadata?.analysis_timestamp
+                            }
                           </span>
                         </div>
                       </div>
@@ -860,7 +874,12 @@ export default function DetailedAnalysisPage() {
                           판정
                         </h4>
                       </div>
-                      <p className={`text-${getsummaryColor(analyzedData?.similarity_analysis?.overall_summary?.overall_ad_score)}-700 font-medium`}>
+                      <p
+                        className={`text-${getsummaryColor(
+                          analyzedData?.similarity_analysis?.overall_summary
+                            ?.overall_ad_score
+                        )}-700 font-medium`}
+                      >
                         {
                           analyzedData?.similarity_analysis?.overall_summary
                             ?.overall_ad_judgment
@@ -885,7 +904,7 @@ export default function DetailedAnalysisPage() {
                             <div className="mb-4">
                               <span className="text-sm font-medium text-gray-600"></span>
                               <p className="text-sm text-gray-800 mt-2 leading-relaxed">
-                                "{sentence.original_sentence}"
+                                "{sentence?.sentence_text}"
                               </p>
                             </div>
 
@@ -895,69 +914,74 @@ export default function DetailedAnalysisPage() {
                                   동일 문장 비율:
                                 </span>
                                 <span className="font-medium">
-                                  3
+                                  {sentence?.identical_sentences_ratio}
                                 </span>
                               </div>
-                              {/* <div className="flex items-center">
-                                <span className="text-gray-500 w-20">
+                              <div className="flex items-center">
+                                <span className="text-gray-500 w-30">
                                   높은 유사도 문장 수:
                                 </span>
                                 <span className="font-medium">
-                                  {sentence.similarSentences}
+                                  {sentence?.high_similarity_sentences_count}
                                 </span>
                               </div>
                               <div className="flex items-center">
-                                <span className="text-gray-500 w-20">
+                                <span className="text-gray-500 w-30">
                                   유사 블로그 비율:
                                 </span>
                                 <span className="font-medium">
-                                  {sentence.similarBlogRatio}
+                                  {sentence?.similar_blogs_ratio}
                                 </span>
                               </div>
                               <div className="flex items-center">
-                                <span className="text-gray-500 w-20">
+                                <span className="text-gray-500 w-30">
                                   문장 광고성 점수:
                                 </span>
                                 <span className="font-medium">
-                                  {sentence.adScore}
+                                  {sentence?.sentence_ad_score}
                                 </span>
-                              </div> */}
+                              </div>
                             </div>
                             {/* 유사한 블로그가 있는 경우에만 표시 */}
-                            {sentence.similar_matches &&
-                              sentence.similar_matches.length > 0 && (
+                            {sentence?.high_similarity_matches &&
+                              sentence?.high_similarity_matches.length > 0 && (
                                 <div className="mt-4">
                                   <h5 className="text-sm font-semibold text-gray-800 mb-3">
                                     유사한 블로그 발견:
                                   </h5>
-                                  {sentence.similar_matches
+                                  {sentence?.high_similarity_matches
                                     .slice(0, 3)
-                                    .map((blog, index) => (
-                                      <div key={index} className="space-y-2">
-                                        <div className="flex items-center gap-2">
-                                          <span className="text-sm font-medium">
-                                            {index + 1}.
-                                            <Link
-                                              href={blog.url}
-                                              target="_blank"
-                                            >
-                                              {blog.url.length > 45
-                                                ? blog.url.slice(0, 45) + "..."
-                                                : blog.url}
-                                            </Link>
-                                          </span>
-                                          <span className="text-sm text-gray-600">
-                                            (유사도:{" "}
-                                            {blog.similarity.toFixed(2)})
-                                          </span>
+                                    .map(
+                                      (
+                                        { source, similarity, snippet },
+                                        index
+                                      ) => (
+                                        <div key={index} className="space-y-2">
+                                          <div className="flex items-center gap-2">
+                                            <span className="text-sm font-medium">
+                                              {index + 1}. {source?.blog_name}{" "}
+                                              {" ("}
+                                              <Link
+                                                href={source?.url}
+                                                target="_blank"
+                                              >
+                                                {source?.url.slice(0, 25) +
+                                                  "..."}
+                                              </Link>
+                                              {")"}
+                                            </span>
+                                            <span className="text-sm text-gray-600">
+                                              (유사도: {similarity.toFixed(2)})
+                                            </span>
+                                          </div>
+                                          <div className="bg-gray-50 p-3 rounded-lg border-l-4 border-green-500">
+                                            <p className="text-xs text-gray-700 leading-relaxed italic">
+                                              "{snippet}"
+                                            </p>
+                                          </div>
                                         </div>
-                                        <div className="bg-gray-50 p-3 rounded-lg border-l-4 border-green-500">
-                                          <p className="text-xs text-gray-700 leading-relaxed italic">
-                                            "{blog.snippet}"
-                                          </p>
-                                        </div>
-                                      </div>
-                                    ))}
+                                      )
+                                    )}
                                 </div>
                               )}
                           </div>
