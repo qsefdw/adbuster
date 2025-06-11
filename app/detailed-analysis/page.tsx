@@ -321,17 +321,13 @@ export default function DetailedAnalysisPage() {
     },
   ];
 
-  // 2. objectivityMetrics 데이터 아래에 객관성 분석 그래프 데이터 추가
-  const pallete = ["#f59e0b", "#ef4444", "#f59e0b"];
-
   const objectivityBarData = Object.entries(
     analyzedData?.ad_style_analysis?.ad_details_by_criteria
   ).map(([key, value], idx) => {
-    console.log(pallete[idx]);
     return {
       name: key,
       value,
-      color: `${pallete[idx % 2]}`,
+      color: "#ef4444",
       ratio: null,
     };
   });
@@ -1062,6 +1058,21 @@ export default function DetailedAnalysisPage() {
                         {analyzedData?.ad_style_analysis?.category}
                       </Badge>
                     </div>
+                    <div className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
+                      <h5 className="text-sm font-medium text-gray-500 mb-3">
+                        키워드 분석 결과 (
+                        {analyzedData?.ad_style_analysis?.ad_score} / 34)
+                      </h5>
+                      {Object.entries(
+                        analyzedData?.ad_style_analysis?.ad_details_by_criteria
+                      ).map(([key, value], idx) => {
+                        return (
+                          <Badge className="bg-green-100 text-green-800 font-normal">
+                            {key}: {value}
+                          </Badge>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   {/* 오른쪽 열 - 객관성 그래프 */}
@@ -1138,16 +1149,6 @@ export default function DetailedAnalysisPage() {
                             </Bar>
                           </BarChart>
                         </ResponsiveContainer>
-                      </div>
-                      <div className="mt-4 text-sm text-gray-600">
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className="w-3 h-3 bg-orange-400 rounded-sm"></div>
-                          <span>주의 필요 (33-50%)</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 bg-red-500 rounded-sm"></div>
-                          <span>높은 광고성 (67% 이상)</span>
-                        </div>
                       </div>
                     </div>
 
