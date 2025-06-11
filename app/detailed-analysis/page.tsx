@@ -113,6 +113,18 @@ export default function DetailedAnalysisPage() {
     return "green";
   };
 
+  const getsummaryColor = (overall_ad_score) => {
+    if (isNaN(overall_ad_score)) return "gray";
+
+    if (overall_ad_score >= 8) return "red";
+
+    if (overall_ad_score >= 5) return "orange";
+
+    if (overall_ad_score >= 3) return "yellow";
+
+    return "green";
+  };
+
   const getSplitSentiment = (sentiments: any) => {
     const positive = sentiments.find(
       ({ sentiment }: { sentiment: string }) => sentiment === "긍정"
@@ -752,7 +764,7 @@ export default function DetailedAnalysisPage() {
                             블로그 제목:
                           </span>
                           <span className="text-gray-800">
-                            김달의 100% 로맨틱, 네이버 블로그
+                            {analyzedData?.similarity_analysis?.analysis_metadata?.blog_title}
                           </span>
                         </div>
 
@@ -764,7 +776,7 @@ export default function DetailedAnalysisPage() {
                             href={analyzedUrl}
                             className="text-green-700 hover:underline break-all"
                           >
-                            https://blog.naver.com/prettydr/223881975188
+                            {analyzedData?.similarity_analysis?.analysis_metadata?.url}
                           </a>
                         </div>
 
@@ -772,7 +784,7 @@ export default function DetailedAnalysisPage() {
                           <span className="text-gray-600 min-w-0 flex-shrink-0">
                             콘텐츠 길이:
                           </span>
-                          <span className="text-gray-800">2,434자</span>
+                          <span className="text-gray-800">{analyzedData?.similarity_analysis?.analysis_metadata?.content_length}</span>
                         </div>
 
                         <div className="flex items-start gap-2">
@@ -780,7 +792,7 @@ export default function DetailedAnalysisPage() {
                             분석 시간:
                           </span>
                           <span className="text-gray-800">
-                            2025-06-06 22:08:31
+                            {analyzedData?.similarity_analysis?.analysis_metadata?.analysis_timestamp}
                           </span>
                         </div>
                       </div>
@@ -848,11 +860,11 @@ export default function DetailedAnalysisPage() {
                           판정
                         </h4>
                       </div>
-                      <p className="text-green-700 font-medium">
-                        {getadtext(
+                      <p className={`text-${getsummaryColor(analyzedData?.similarity_analysis?.overall_summary?.overall_ad_score)}-700 font-medium`}>
+                        {
                           analyzedData?.similarity_analysis?.overall_summary
-                            ?.overall_ad_score
-                        )}
+                            ?.overall_ad_judgment
+                        }
                       </p>
                     </div>
                   </div>
@@ -883,7 +895,7 @@ export default function DetailedAnalysisPage() {
                                   동일 문장 비율:
                                 </span>
                                 <span className="font-medium">
-                                  {sentence.ad_score.toFixed(2)}
+                                  3
                                 </span>
                               </div>
                               {/* <div className="flex items-center">
