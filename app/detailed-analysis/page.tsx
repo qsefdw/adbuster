@@ -234,6 +234,19 @@ export default function DetailedAnalysisPage() {
     return Array.from(uniqueByKey.values());
   };
 
+  const getFormattedDate = (timestampString: string) => {
+    const dateObject = new Date(timestampString);
+
+    const year = dateObject.getFullYear(); // 연도 (예: 2025)
+    const month = String(dateObject.getMonth() + 1).padStart(2, "0"); // 월 (0부터 시작하므로 +1, 두 자리로 패딩)
+    const day = String(dateObject.getDate()).padStart(2, "0"); // 일 (두 자리로 패딩)
+    const hours = String(dateObject.getHours()).padStart(2, "0"); // 시 (두 자리로 패딩)
+    const minutes = String(dateObject.getMinutes()).padStart(2, "0"); // 분 (두 자리로 패딩)
+    const seconds = String(dateObject.getSeconds()).padStart(2, "0"); // 초 (두 자리로 패딩)
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
+
   // 키워드 분석 데이터 (실제 백엔드 데이터 기반)
   const keywordRepetitionData = {
     mainProductName: getMainProductName(
@@ -803,10 +816,10 @@ export default function DetailedAnalysisPage() {
                             분석 시간:
                           </span>
                           <span className="text-gray-800">
-                            {
+                            {getFormattedDate(
                               analyzedData?.similarity_analysis
                                 ?.analysis_metadata?.analysis_timestamp
-                            }
+                            )}
                           </span>
                         </div>
                       </div>
