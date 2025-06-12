@@ -92,7 +92,7 @@ export default function Component() {
               <Globe className="w-5 h-5 text-white" />
             </div>
             <h1 className="text-xl font-bold text-gray-900">
-              블로그 광고성 분석기
+              AD Buster
             </h1>
           </div>
         </div>
@@ -122,7 +122,7 @@ export default function Component() {
                 <Input
                   id="url"
                   type="url"
-                  placeholder="https://blog.naver.com/example/123456789"
+                  placeholder="복사한 Url을 여기에 붙여주세요."
                   value={url}
                   onChange={handleUrlChange}
                   className={`h-14 text-lg border-2 transition-all duration-200 ${
@@ -157,10 +157,10 @@ export default function Component() {
                   💡 분석 항목
                 </h3>
                 <ul className="text-sm text-gray-600 space-y-1">
-                  <li>• 광고성 문구 및 키워드 감지</li>
-                  <li>• 감정 분석 (긍정/부정/중립)</li>
-                  <li>• 내용 객관성 평가</li>
-                  <li>• 종합 신뢰도 점수</li>
+                  <li>• 감정 분석</li>
+                  <li>• 키워드 분석</li>
+                  <li>• 유사도 분석</li>
+                  <li>• 블로그 평가</li>
                 </ul>
               </div>
             </CardContent>

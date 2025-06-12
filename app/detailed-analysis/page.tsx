@@ -33,7 +33,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   PieChart,
   Pie,
@@ -58,7 +58,11 @@ export default function DetailedAnalysisPage() {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const { analyzedData, analyzedUrl } = useAnalyzer();
 
-  console.log(analyzedData);
+  useEffect(() => {
+    if (!analyzedData || !analyzedUrl) {
+      router.push("/");
+    }
+  }, [analyzedData, analyzedUrl]);
 
   const getPositiveText = (positive_score: number) => {
     if (positive_score > 80)
@@ -104,7 +108,11 @@ export default function DetailedAnalysisPage() {
   const getfinalresult = (final_score) => {
     if (final_score == null) return <span>오류입니다.</span>;
     if (final_score >= 80)
-      return <span>80점 이상인 <strong>매우 신뢰</strong>할 수 있는 블로그입니다.</span>;
+      return (
+        <span>
+          80점 이상인 <strong>매우 신뢰</strong>할 수 있는 블로그입니다.
+        </span>
+      );
     if (final_score >= 60)
       return (
         <span>
@@ -112,8 +120,16 @@ export default function DetailedAnalysisPage() {
         </span>
       );
     if (final_score >= 40)
-      return <span>광고성 내용이 포함되었을 수 있으니 <strong>주의</strong>가 필요합니다.</span>;
-    return <span>광고글일 가능성이 <strong>높습니다</strong>.</span>;
+      return (
+        <span>
+          광고성 내용이 포함되었을 수 있으니 <strong>주의</strong>가 필요합니다.
+        </span>
+      );
+    return (
+      <span>
+        광고글일 가능성이 <strong>높습니다</strong>.
+      </span>
+    );
   };
 
   const getfinalcolor = (final_score) => {
@@ -148,16 +164,16 @@ export default function DetailedAnalysisPage() {
     return "green";
   };
 
-  const getSplitSentiment = (sentiments: any) => {
-    const positive = sentiments.find(
+  const getSplitSentiment = (sentiments: any = ["", ""]) => {
+    const positive = sentiments?.find(
       ({ sentiment }: { sentiment: string }) => sentiment === "긍정"
     );
 
-    const negative = sentiments.find(
+    const negative = sentiments?.find(
       ({ sentiment }: { sentiment: string }) => sentiment === "부정"
     );
 
-    const neutral = sentiments.filter(
+    const neutral = sentiments?.filter(
       ({ sentiment }: { sentiment: string }) => sentiment === "중립"
     );
 
@@ -219,7 +235,8 @@ export default function DetailedAnalysisPage() {
         const c_score = c?.score ?? 0;
 
         return c_score > h_score ? c : h;
-      }
+      },
+      []
     );
 
     return mainProduct.product;
@@ -232,7 +249,8 @@ export default function DetailedAnalysisPage() {
         const c_count = c?.count ?? 0;
 
         return c_count > h_count ? c : h;
-      }
+      },
+      []
     );
 
     return highestKeyword.count;
@@ -273,16 +291,16 @@ export default function DetailedAnalysisPage() {
   // 키워드 분석 데이터 (실제 백엔드 데이터 기반)
   const keywordRepetitionData = {
     mainProductName: getMainProductName(
-      analyzedData?.keyword_analysis?.top_keywords
+      analyzedData?.keyword_analysis?.top_keywords ?? []
     ),
     repetitionScore: (analyzedData?.keyword_analysis?.percentage ?? 0).toFixed(
       1
     ),
     topKeywordsAverage: getTopKeywordCount(
-      analyzedData?.keyword_analysis?.keyword_details
+      analyzedData?.keyword_analysis?.keyword_details ?? []
     ),
     detailsTable: getDetailsTable(
-      analyzedData?.keyword_analysis?.keyword_details
+      analyzedData?.keyword_analysis?.keyword_details ?? []
     ),
   };
 
@@ -367,7 +385,7 @@ export default function DetailedAnalysisPage() {
   ];
 
   const objectivityBarData = Object.entries(
-    analyzedData?.ad_style_analysis?.ad_details_by_criteria
+    analyzedData?.ad_style_analysis?.ad_details_by_criteria ?? {}
   ).map(([key, value], idx) => {
     return {
       name: key,
@@ -627,7 +645,7 @@ export default function DetailedAnalysisPage() {
                             ?.hybrid
                         ).map((sentiments) => (
                           <div
-                            key={sentiments.sentence_index}
+                            key={sentiments?.sentence_index}
                             className={`bg-white p-3 rounded border-l-4 ${
                               sentiments.sentiment === "긍정"
                                 ? "border-green-500"
@@ -950,7 +968,7 @@ export default function DetailedAnalysisPage() {
                       </h4>
 
                       <div className="space-y-8">
-                        {sentenceAnalysisData.map((sentence, idx) => (
+                        {sentenceAnalysisData?.map((sentence, idx) => (
                           <div
                             key={idx}
                             className="border-b border-gray-100 pb-6 last:border-b-0"
@@ -1108,8 +1126,9 @@ export default function DetailedAnalysisPage() {
                         키워드 분석 결과 (
                         {analyzedData?.ad_style_analysis?.ad_score} / 34)
                       </h5>
-                      {Object.entries(
-                        analyzedData?.ad_style_analysis?.ad_details_by_criteria
+                      {Object?.entries(
+                        analyzedData?.ad_style_analysis
+                          ?.ad_details_by_criteria ?? {}
                       ).map(([k, v], idx) => {
                         return (
                           <Badge

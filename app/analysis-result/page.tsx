@@ -14,10 +14,17 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAnalyzer } from "@/contexts/AnalyzerContext";
+import { useEffect } from "react";
 
 export default function AnalysisResultPage() {
   const { analyzedData, analyzedUrl } = useAnalyzer();
   const router = useRouter();
+
+  useEffect(() => {
+    if (!analyzedData || !analyzedUrl) {
+      router.push("/");
+    }
+  }, [analyzedData, analyzedUrl]);
 
   const handleBack = () => {
     router.back();
